@@ -452,7 +452,7 @@ function rescore() {
   }
   ctx.putImageData(img, 0, 0);
   earth.setOverlay(heat); earth.setOverlayOpacity(0.9);
-  $('#lgHi').textContent = `best ${Math.round(hi)} / 100`;
+  $('#lgLo').textContent = Math.round(lo); $('#lgHi').textContent = `${Math.round(hi)} of 100`;
   state.common = commonness();
   state.cands = S.pickCandidates(D, sc, { n: 10, sepKm: 300, excludeKm: 150, known: D.man.known });
   state.known = D.man.known.filter((k) => k.body === state.body || k.body === 'both').map((k) => {
@@ -521,15 +521,40 @@ function pctT(tr, v) {
 }
 function drawProfile(rows, body) {
   $('#pfBody').textContent = body === 'moon' ? 'The Moon target' : 'The Mars target';
-  $('#dProfile').innerHTML = aspects(rows).sort((a, b) => b.w - a.w).map((a) => `<section class="pfg ${lvl(a.sim)}"><header><b>${esc(a.name)}</b><span>${Math.round(a.sim * 100)}</span></header>` +
-    a.rows.map((r) => {
-      const tr = r.tr, vals = `${fmt(tr.id, r.earth)} · ${fmt(tr.id, r.target, 'target')}`;
-      if (tr.transform === 'cat') return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}%</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} here, ${esc(fmt(tr.id, r.target, 'target'))} there</div></div>`;
-      const e = pctT(tr, S.toT(tr, r.earth)), tv = S.toT(tr, r.target), t = pctT(tr, tv);
-      const out = tv < tr.earthLo ? '<span class="out" style="left:0">‹</span>' : tv > tr.earthHi ? '<span class="out" style="right:0">›</span>' : '';
-      return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${vals}</span></div>
-        <div class="tr"><i class="gap" style="left:${(Math.min(e, t) * 100).toFixed(1)}%;width:${(Math.abs(e - t) * 100).toFixed(1)}%"></i><i class="e" style="left:${(e * 100).toFixed(1)}%"></i><i class="t" style="left:${(t * 100).toFixed(1)}%"></i>${out}</div></div>`;
-    }).join('') + '</section>').join('');
+  $('#dProfile').innerHTML = aspects(rows).sort((a, b) => b.w - a.w).map((a) => `<section class="pfg ${lvl(a.sim)}"><header><b>${esc(a.name)}</b><span>${Math.round(a.sim * 100)}<small> /100</small></span></header>` +
+    a.rows.map((r) => traitScale(r)).join('') + '</section>').join('');
+}
+// One trait as a dot plot on a value axis that spans Earth's 1st to 99th percentile. Behind it, Earth's distribution
+// (rebuilt from the 101 stored percentiles), and the band of values that still earn points against this target.
+// Everything is HTML/SVG positioned in percent, so it scales with the panel and needs no chart library.
+function traitScale(r) {
+  const tr = r.tr, sim = `<span class="sim">${Math.round(r.sim * 100)}% match</span>`;
+  if (tr.transform === 'cat') return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} here, ${esc(fmt(tr.id, r.target, 'target'))} there</div></div>`;
+  const lo = tr.earthLo, hi = tr.earthHi, span = hi - lo || 1;
+  const X = (v) => Math.max(0, Math.min(1, (v - lo) / span)) * 100;
+  const ev = S.toT(tr, r.earth), tv = S.toT(tr, r.target);
+  const below = tv < lo, above = tv > hi;
+  // distribution: share of land per bin, from the percentile table
+  const B = 40, raw = [];
+  for (let b = 0; b < B; b++) raw.push(pctT(tr, lo + (span * (b + 1)) / B) - pctT(tr, lo + (span * b) / B));
+  const h = raw.map((v, b) => (raw[Math.max(0, b - 1)] + 2 * v + raw[Math.min(B - 1, b + 1)]) / 4);   // light smoothing: the percentile table is coarse
+  const m = Math.max(...h) || 1;
+  let d = 'M0 16';
+  h.forEach((v, b) => { d += ` L${((b + 0.5) * 100 / B).toFixed(2)} ${(16 - (v / m) * 15).toFixed(2)}`; });
+  d += ' L100 16 Z';
+  // band of values that still score: target +- tolerance, or for a target beyond Earth, the half of Earth that leans toward it
+  let z0, z1;
+  if (below) { z0 = 0; z1 = X(tr.quant[50]); } else if (above) { z0 = X(tr.quant[50]); z1 = 100; }
+  else { z0 = X(tv - tr.tol); z1 = X(tv + tr.tol); }
+  const tPos = X(tv), arrow = below ? '<span class="ar" style="left:-2px">‹</span>' : above ? '<span class="ar" style="right:-2px">›</span>' : '';
+  const loLab = fmt(tr.id, S.fromT(tr, lo)), hiLab = fmt(tr.id, S.fromT(tr, hi));
+  const tLab = fmt(tr.id, r.target, 'target');
+  return `<div class="pf ${lvl(r.sim)}" title="${esc(`${tr.label}: ${fmt(tr.id, r.earth)} here, ${tLab} at the target, ${Math.round(r.sim * 100)}% match`)}">
+    <div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="vals">here ${fmt(tr.id, r.earth)} · target ${tLab}</div>
+    <div class="sc"><svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/></svg>
+      <i class="zn" style="left:${z0.toFixed(1)}%;width:${Math.max(0.6, z1 - z0).toFixed(1)}%"></i><i class="ax"></i>
+      <i class="e" style="left:${X(ev).toFixed(1)}%"></i><i class="t" style="left:${(below ? 0 : above ? 100 : tPos).toFixed(1)}%"></i>${arrow}</div>
+    <div class="ends"><span>${below ? `<b>‹ ${tLab}</b> · ` : ''}${loLab}</span><span>${hiLab}${above ? ` · <b>${tLab} ›</b>` : ''}</span></div></div>`;
 }
 
 function rationale(i) {
@@ -548,7 +573,7 @@ function renderList() {
   let rows;
   if (isNew) {
     rows = state.cands.map((c, r) => ({ c, rank: r + 1, type: cellType(c.i) }));
-    $('#listNote').innerHTML = `The ten best-matching places on Earth that are at least 150 km from every catalogued analog site. <b>Computed, not field-validated.</b>`;
+    $('#listNote').innerHTML = `The ten best-matching places on Earth that are at least 150 km from every catalogued analog site. <b>Computed, not field-validated.</b><span class="barkey">Bars: how well each aspect matches, from empty (nothing alike) to full (identical).</span>`;
   } else {
     rows = state.known.map((k, r) => ({ k, rank: r + 1, type: TYPE_LABEL[k.k.types[0]] || k.k.types[0] }));
     const pcts = state.known.map((r) => r.pct).sort((a, b) => a - b), med = pcts[Math.floor(pcts.length / 2)] || 0;

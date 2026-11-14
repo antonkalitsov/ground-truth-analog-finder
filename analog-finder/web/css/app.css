@@ -143,6 +143,7 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .types button { font-size: 12.5px; color: var(--dim); border: 1px solid var(--line); border-radius: 2px; padding: 4px 9px; }
 .types button.on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
 .listnote { font-size: 13px; color: var(--dim); padding: 14px 0 4px; max-width: 60ch; }
+.listnote .barkey { display: block; margin-top: 6px; color: var(--faint); font-size: 12px; }
 .listnote b { color: var(--ink); font-weight: 500; }
 .list { list-style: none; padding: 0; }
 .item { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; column-gap: 10px; padding: 15px 0 16px; border-bottom: 1px solid var(--line); cursor: pointer; }
@@ -168,6 +169,8 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .map { position: relative; min-width: 0; min-height: 0; overflow: hidden; isolation: isolate; }
 .earth { position: absolute; inset: 0; }
 .legend { position: absolute; left: 22px; bottom: 18px; display: flex; align-items: center; gap: 9px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); pointer-events: none; }
+.legend { flex-direction: column; align-items: flex-start; gap: 5px; }
+.lgr { display: flex; align-items: center; gap: 8px; letter-spacing: 0; font-variant-numeric: tabular-nums; color: var(--ink); }
 .ramp { width: 120px; height: 3px; background: linear-gradient(90deg, rgba(192,112,79,.2), #C0704F 40%, #E8D9A8); }
 .tip { position: absolute; z-index: 6; pointer-events: none; background: var(--bg); border: 1px solid var(--line); padding: 5px 9px; font-size: 12px; transform: translate(14px, 14px); white-space: nowrap; }
 .loading { position: absolute; inset: 0; display: grid; place-content: center; color: var(--dim); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; background: var(--bg); transition: opacity .5s; }
@@ -216,14 +219,23 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .pf { padding: 6px 0 3px; }
 .pf .l { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; }
 .pf .l span { color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pf .tr { position: relative; height: 14px; margin-top: 3px; }
-.pf .tr::before { content: ""; position: absolute; left: 0; right: 0; top: 6.5px; height: 1px; background: #3a4043; }
-.pf .gap { position: absolute; top: 5.5px; height: 3px; background: #8d8a84; }
-.pf.hi .gap { background: var(--accent); } .pf.lo .gap { background: var(--terra); }
-.pf .e, .pf .t { position: absolute; top: 3px; width: 8px; height: 8px; margin-left: -4px; }
-.pf .t { top: 2.5px; width: 9px; height: 9px; margin-left: -4.5px; }
-.pf .out { position: absolute; top: -1px; font-size: 10px; color: var(--accent); }
 .pf.off { opacity: .4; }
+/* trait scale: distribution (grey hill), scoring zone (accent band), this place (dot), target (diamond), ends labelled */
+.pfkey i.z { width: 14px; height: 8px; background: rgba(232,217,168,.22); border-top: 1px solid rgba(232,217,168,.6); }
+.pfkey i.d { width: 14px; height: 8px; background: rgba(242,238,232,.16); clip-path: polygon(0 100%, 30% 20%, 60% 55%, 100% 100%); }
+.pfnote { font-size: 12px; color: var(--dim); margin: 2px 0 6px; max-width: 64ch; }
+.pf .sc { position: relative; height: 26px; margin-top: 4px; }
+.pf .sc svg { position: absolute; left: 0; right: 0; bottom: 6px; width: 100%; height: 16px; display: block; }
+.pf .sc svg path { fill: rgba(242,238,232,.13); }
+.pf .sc .ax { position: absolute; left: 0; right: 0; bottom: 6px; height: 1px; background: #4a5154; }
+.pf .sc .zn { position: absolute; bottom: 6px; height: 16px; background: rgba(232,217,168,.13); border-top: 1px solid rgba(232,217,168,.45); }
+.pf .sc .e, .pf .sc .t { position: absolute; bottom: 2px; width: 9px; height: 9px; margin-left: -4.5px; }
+.pf .sc .t { bottom: 1.5px; width: 10px; height: 10px; margin-left: -5px; }
+.pf .sc .ar { position: absolute; bottom: 0; font-size: 12px; line-height: 12px; color: var(--accent); }
+.pf .ends { display: flex; justify-content: space-between; gap: 8px; font-size: 10.5px; color: var(--faint); font-variant-numeric: tabular-nums; margin-top: 1px; }
+.pf .ends b { font-weight: 500; color: var(--accent); }
+.pf .vals { font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; margin-top: 1px; }
+.pf .sim { font-size: 11px; color: var(--faint); margin-left: 6px; }
 .pf .cat { font-size: 12.5px; color: var(--dim); margin-top: 3px; }
 .bul { list-style: none; padding: 0; display: grid; gap: 7px; font-size: 14px; max-width: 68ch; }
 .bul li { padding-left: 16px; position: relative; }

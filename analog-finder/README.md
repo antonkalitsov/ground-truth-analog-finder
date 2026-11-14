@@ -13,7 +13,6 @@ Analog sites are usually picked by experience: Atacama, Antarctica, Iceland, Haw
 The site is static (HTML, CSS, plain JavaScript modules, no build step, no dependencies, no 3D library, about 5.5 MB).
 
 - **Windows:** double-click `start.bat`, then open http://localhost:8000
-- **Mac or Linux:** `sh start.sh`
 - **Any system:** `cd web` then `python -m http.server 8000`, then open http://localhost:8000
 
 It must be served over http (not opened as a file) because the browser loads the data pack with `fetch`. Scoring works offline; only the live Earth terrain close-ups need the internet. Deploys as-is to GitHub Pages or any static host (publish the `web` folder).
@@ -34,6 +33,7 @@ Share a view with the URL hash, for example `#moon/shackleton-connecting-ridge/p
 
 - **Three stages, one page:** title card, destination choice, instrument. No reloads; a URL hash such as `#moon/haworth/isru` opens the instrument directly.
 - **No 3D library.** The Moon and Mars are each one full-canvas triangle whose fragment shader ray-casts a sphere, wraps a real map on it (Kaguya Terrain Camera mosaic; MOLA shaded relief tinted with TES albedo), bends the normal with the map's own brightness and lights it from one side (`web/js/planets.js`, about 100 lines). The Earth globe is a small raw-WebGL module (`web/js/globe.js`). Both are fetched only when their stage opens, and pixel ratio is capped at 2.
+- **Match profile:** every trait is drawn as a small dot plot on Earth's own range (1st to 99th percentile, ends labelled in real units), with Earth's distribution behind it, the band of values that still score shaded, the place as a dot and the target as a diamond, and an arrow when the target lies beyond Earth. The map legend states the score range it colours.
 - **Motion** uses transform and opacity only, with `cubic-bezier(0.16, 1, 0.3, 1)` for entrances and `cubic-bezier(0.65, 0, 0.2, 1)` for moves. With `prefers-reduced-motion` the title card is skipped, the planets hold still and every state change is instant.
 - **Type:** Newsreader (variable, self-hosted, SIL Open Font License) for display, the system sans for everything else, tabular numerals for all figures. One accent colour.
 - **Measured** in headless Chromium at 1440x900: title painted in under 0.1 s, cumulative layout shift 0, no third-party scripts, no horizontal overflow at 390x844.
@@ -125,29 +125,26 @@ Every official dataset was checked against this validation. JAXA Diviner, GCOM-C
 
 ## Rebuild the data
 
-The simplest way is one command from the repository root: `setup.bat rebuild` (Windows) or `sh setup.sh rebuild` (Mac/Linux). That installs the packages in `requirements.txt` into `.venv/` and runs `pipeline/rebuild.py`, which performs every step below and skips finished ones on a re-run. About 6 GB of downloads, all public, no keys.
-
-To run the steps by hand (Python 3.10+ with `pip install -r requirements.txt`):
+Python 3.10+ with `numpy rasterio pillow zarr numcodecs`. About 5 GB of downloads (all public, no keys).
 
 ```
 cd pipeline
-python get_data.py ../raw                              # Mars/Moon DEMs, LROC WAC, lunar geologic map, Natural Earth, Blue Marble
 python 01_fetch_earth_tiles.py ../raw/terrarium7      # 16,384 Earth elevation tiles (AWS)
 python 02_fetch_power.py ../raw/power                  # NASA POWER climatology (AWS Zarr)
 python 03_build_earth_dem.py ../raw/terrarium7 ../raw/earth_1min.npy
 python 04_fetch_worldcover.py ../raw/worldcover_025.npz  # ESA WorldCover overviews (AWS)
+# Natural Earth geojson into ../raw/ne/ (land, lakes, antarctic ice shelves, glaciated areas, admin 0, admin 1, geography regions)
+# Mars and Moon DEMs into ../raw/: Mars_MGS_MOLA_DEM_mosaic_global_463m.tif, Mars_MGS_TES_Albedo_mosaic_global_7410m.tif, LRO_LOLA_DEM_SPole75_30m.tif (USGS Astrogeology on AWS)
 python 05_earth_traits.py ../raw ../raw/earth_traits.npz
-cd .. && python fetch_official.py && cd pipeline       # LRO Diviner (PDS), JAXA Earth API layers, GLiM -> data/official/
-# copy data/official/*.npz and glim_05deg.zip into ../raw/official/
+# official challenge datasets: run ../fetch_official.py on a machine that can reach NASA PDS and JAXA,
+# then copy data/official/*.npz and glim_05deg.zip into ../raw/official/
 python 05b_official_earth.py ../raw                      # JAXA GCOM-C, GSMaP, MODIS NDVI and GLiM onto the Earth grid
 python 06_mars_moon_grids.py ../raw ../raw/grids ../web/assets
+# LROC WAC south pole mosaic and the Unified Geologic Map of the Moon raster into ../raw/lro/ (USGS Astrogeology on AWS)
 python 06b_lro_layers.py ../raw ../web/assets            # WAC picker map, lunar geology, Diviner gridding
 python 07_build_pack.py ../raw ../web
-python 07c_hires_images.py ../raw ../web
 python 08_findings.py ../raw ../web ../FINDINGS.md
 ```
-
-`pipeline/06c_moon_texture_pole.py` was run once to patch `web/assets/moon.jpg`, which is committed, so it is not part of the rebuild.
 
 `pipeline/targets.json` lists the Moon and Mars targets with sources; `pipeline/known_sites.json` lists the 107 known analog sites; `pipeline/earth_sites_validation.csv` is the analog / non-analog validation set.
 
