@@ -42,7 +42,6 @@ const rockName = (v, side) => {
 };
 const fmt = (id, v, side = 'earth') => (v == null || !Number.isFinite(v) ? '–' : id === 'rock' ? rockName(v, side) : UNITS[id](v));
 const latlon = (la, lo) => `${Math.abs(la).toFixed(2)}° ${la >= 0 ? 'N' : 'S'}, ${Math.abs(lo).toFixed(2)}° ${lo >= 0 ? 'E' : 'W'}`;
-const label = (sim) => (sim >= 0.75 ? 'strong' : sim >= 0.4 ? 'partial' : 'weak');
 const shortName = (t) => t.name.replace(/\s*\(.*?\)\s*/g, ' ').trim();
 const bodyName = (b) => (b === 'moon' ? 'the Moon' : 'Mars');
 const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
@@ -427,8 +426,10 @@ function pickMarsPoint(lat, lon) {
 
 // ------------------------------------------------------------------ scoring, heat map, lists
 const heat = document.createElement('canvas');
-// one hue family only: terracotta (weak) to the pale-yellow accent (strong)
-const RAMP = [[0, [192, 112, 79, 0]], [0.3, [192, 112, 79, 170]], [0.65, [216, 160, 104, 230]], [0.9, [232, 217, 168, 250]], [1, [244, 234, 196, 255]]];
+// One hue, dark to light: blue is the colour of "match score" everywhere in the app (map, points bars, scoring bands).
+// Blue is also the one hue the Earth base map (browns, ochres, greens) never uses, so the best ground stands out.
+// The same stops drive the CSS legend gradient (.ramp in app.css); change both together.
+const RAMP = [[0, [16, 66, 129, 0]], [0.25, [28, 92, 171, 120]], [0.55, [57, 135, 229, 215]], [0.85, [134, 182, 239, 245]], [1, [205, 226, 251, 255]]];
 function rampColor(t) {
   for (let k = 1; k < RAMP.length; k++) if (t <= RAMP[k][0]) {
     const [a, ca] = RAMP[k - 1], [b, cb] = RAMP[k], f = (t - a) / (b - a);
@@ -483,7 +484,8 @@ function rescore() {
   }
   ctx.putImageData(img, 0, 0);
   earth.setOverlay(heat); earth.setOverlayOpacity(0.9);
-  $('#lgLo').textContent = Math.round(lo); $('#lgHi').textContent = `${Math.round(hi)} of 100`;
+  $('#lgLo').textContent = Math.round(lo); $('#lgMid').textContent = Math.round((lo + hi) / 2); $('#lgHi').textContent = Math.round(hi);
+  $('#lgNote').textContent = `Uncoloured land scores below ${Math.round(lo)}.`;
   state.common = commonness();
   state.cands = S.pickCandidates(D, sc, { n: 10, sepKm: 300, excludeKm: 150, known: D.man.known });
   state.cands.forEach((c, r) => { c.rank1 = r + 1; c.fine = fineOf(c.i); c.score2 = c.fine ? stage2Score(c.i, c.fine) : null; });
@@ -534,17 +536,44 @@ function commonness() {
 const tell = (r) => r.w * r.sim * (1.02 - (state.common[r.tr.id] || 0));
 
 // ---- aspects: the 17 traits folded into 8 groups a reader can hold in mind
-const ASPECT = { Terrain: 'Terrain', Surface: 'Surface', Thermal: 'Heat', Illumination: 'Sunlight', 'Water & ice': 'Water, ice', Atmosphere: 'Air', Biology: 'Life', Geology: 'Rock' };
-const lvl = (s) => (s >= 0.75 ? 'hi' : s < 0.4 ? 'lo' : '');
+// The score is a weighted average, so it splits exactly into points: an aspect is worth (its weight / all weights) x 100
+// points and earns that times its similarity. The earned points of all aspects add up to the score shown.
+const ASPECT = { Terrain: 'Terrain', Surface: 'Surface', Thermal: 'Temperature', Illumination: 'Sunlight', 'Water & ice': 'Water and ice', Atmosphere: 'Air and dust', Biology: 'Plant life', Geology: 'Rock type' };
+const aspectName = (g) => ASPECT[g] || g;
+const pts = (v) => (v >= 9.95 ? Math.round(v).toString() : v.toFixed(1));
 function aspects(rows) {
-  const g = new Map();
-  for (const r of rows) { if (r.w <= 0) continue; const a = g.get(r.tr.group) || { name: r.tr.group, w: 0, s: 0, rows: [] }; a.w += r.w; a.s += r.w * r.sim; a.rows.push(r); g.set(r.tr.group, a); }
-  return [...g.values()].map((a) => ({ ...a, sim: a.s / a.w }));
+  const W = rows.reduce((s, r) => s + Math.max(0, r.w), 0) || 1, g = new Map();
+  for (const r of rows) {
+    if (r.w <= 0) continue;
+    const a = g.get(r.tr.group) || { name: r.tr.group, w: 0, s: 0, rows: [] };
+    r.max = (100 * r.w) / W; r.got = r.max * r.sim;
+    a.w += r.w; a.s += r.w * r.sim; a.rows.push(r); g.set(r.tr.group, a);
+  }
+  // fixed order for one purpose (biggest share first), so every row and card lists the aspects the same way
+  return [...g.values()].map((a) => ({ ...a, sim: a.s / a.w, max: (100 * a.w) / W, got: (100 * a.s) / W }))
+    .sort((a, b) => b.max - a.max || a.name.localeCompare(b.name));
 }
-function aspectBars(i) {
-  const as = aspects(rowsFor(i));
-  return `<div class="asp" role="img" aria-label="${esc(as.map((a) => `${ASPECT[a.name] || a.name} ${Math.round(a.sim * 100)}`).join(', '))}">` +
-    as.map((a) => `<span class="${lvl(a.sim)}">${esc(ASPECT[a.name] || a.name)}<i><b style="transform:scaleX(${a.sim.toFixed(2)})"></b></i></span>`).join('') + '</div>';
+// One stacked bar per place: each segment is an aspect, as wide as the points it is worth; the filled part is what it earned.
+function pointsBar(as, { labels = true } = {}) {
+  const segs = as.map((a) => `<span class="seg" style="flex-grow:${a.max.toFixed(2)}" title="${esc(`${aspectName(a.name)}: ${pts(a.got)} of ${pts(a.max)} points`)}"><i style="width:${(a.sim * 100).toFixed(1)}%"></i>${labels && a.max >= 11 ? `<em>${esc(aspectName(a.name))}</em>` : ''}</span>`).join('');
+  return `<div class="pbar${labels ? ' lab' : ''}" role="img" aria-label="${esc(as.map((a) => `${aspectName(a.name)} ${pts(a.got)} of ${pts(a.max)} points`).join(', '))}">${segs}</div>`;
+}
+// The two aspects that cost the most points, in words. Losses under 1.5 points are not worth a reader's attention.
+function lossLine(as) {
+  const lost = as.map((a) => ({ a, l: a.max - a.got })).filter((x) => x.l >= 1.5).sort((x, y) => y.l - x.l).slice(0, 2);
+  if (!lost.length) return 'Earns almost every point.';
+  return `Loses most on ${lost.map((x) => `${aspectName(x.a.name).toLowerCase()} (${pts(x.l)})`).join(' and ')}.`;
+}
+// Ranked decomposition for the detail card: one row per aspect, track length = points available, fill = points earned.
+// All tracks share one scale (the largest aspect fills the width), so lengths compare across rows.
+function drawPoints(as, total) {
+  const top = Math.max(...as.map((a) => a.max)) || 1;
+  $('#dPoints').innerHTML = as.map((a) => `<a class="prow" href="#pf-${esc(a.name.replace(/\W+/g, '-'))}">
+      <span class="pn">${esc(aspectName(a.name))}</span>
+      <span class="pt" style="width:${((a.max / top) * 100).toFixed(1)}%"><i style="width:${(a.sim * 100).toFixed(1)}%"></i></span>
+      <span class="pv"><b>${pts(a.got)}</b> of ${pts(a.max)}</span></a>`).join('') +
+    `<div class="prow tot"><span class="pn">Total</span><span></span><span class="pv"><b>${Math.round(total)}</b> of 100</span></div>`;
+  $('#dLoss').textContent = lossLine(as);
 }
 // position of a value (in the trait's transformed space) on Earth's own range, as a 0..1 percentile
 function pctT(tr, v) {
@@ -553,18 +582,21 @@ function pctT(tr, v) {
   let lo = 0, hi = 100; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (q[m] <= v) lo = m; else hi = m; }
   return (lo + (q[hi] > q[lo] ? (v - q[lo]) / (q[hi] - q[lo]) : 0)) / 100;
 }
-function drawProfile(rows, body) {
+function drawProfile(as, body) {
   $('#pfBody').textContent = body === 'moon' ? 'The Moon target' : 'The Mars target';
-  $('#dProfile').innerHTML = aspects(rows).sort((a, b) => b.w - a.w).map((a) => `<section class="pfg ${lvl(a.sim)}"><header><b>${esc(a.name)}</b><span>${Math.round(a.sim * 100)}<small> /100</small></span></header>` +
+  $('#dProfile').innerHTML = as.map((a) => `<section class="pfg" id="pf-${esc(a.name.replace(/\W+/g, '-'))}"><header><b>${esc(aspectName(a.name))}</b><span><b>${pts(a.got)}</b> of ${pts(a.max)} points</span></header>` +
     a.rows.map((r) => traitScale(r)).join('') + '</section>').join('');
 }
 // One trait as a dot plot on a value axis that spans Earth's 1st to 99th percentile. Behind it, Earth's distribution
-// (rebuilt from the 101 stored percentiles), and the band of values that still earn points against this target.
+// (rebuilt from the 101 stored percentiles), and in blue the band of values that still earn points against this target.
 // Everything is HTML/SVG positioned in percent, so it scales with the panel and needs no chart library.
+function traitHead(r) {
+  return `<div class="l"><b>${esc(r.tr.label)}</b><span><b>${pts(r.got)}</b> of ${pts(r.max)} pts</span></div>`;
+}
 function traitScale(r) {
-  const tr = r.tr, sim = `<span class="sim">${Math.round(r.sim * 100)}% match</span>`;
-  if (r.fine) return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} in the Earth zone, ${esc(fmt(tr.id, r.target, 'target'))} in the target zone. Details under "Landing zone at 30 m".</div></div>`;
-  if (tr.transform === 'cat') return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} here, ${esc(fmt(tr.id, r.target, 'target'))} there</div></div>`;
+  const tr = r.tr, simTxt = `${Math.round(r.sim * 100)}% similar`;
+  if (r.fine) return `<div class="pf">${traitHead(r)}<div class="vals"><span class="ve">${esc(fmt(tr.id, r.earth))}</span> in the Earth zone, <span class="vt">${esc(fmt(tr.id, r.target, 'target'))}</span> in the target zone · ${simTxt}</div><div class="cat">Measured at 30 m: see "Landing zone at 30 m" below.</div></div>`;
+  if (tr.transform === 'cat') return `<div class="pf">${traitHead(r)}<div class="vals"><span class="ve">${esc(fmt(tr.id, r.earth))}</span> here, <span class="vt">${esc(fmt(tr.id, r.target, 'target'))}</span> at the target · ${simTxt}</div><div class="cat">Rock families are compared with a published-geology lookup table, not on a scale.</div></div>`;
   const lo = tr.earthLo, hi = tr.earthHi, span = hi - lo || 1;
   const X = (v) => Math.max(0, Math.min(1, (v - lo) / span)) * 100;
   const ev = S.toT(tr, r.earth), tv = S.toT(tr, r.target);
@@ -581,26 +613,20 @@ function traitScale(r) {
   let z0, z1;
   if (below) { z0 = 0; z1 = X(tr.quant[50]); } else if (above) { z0 = X(tr.quant[50]); z1 = 100; }
   else { z0 = X(tv - tr.tol); z1 = X(tv + tr.tol); }
-  const tPos = X(tv), arrow = below ? '<span class="ar" style="left:-2px">‹</span>' : above ? '<span class="ar" style="right:-2px">›</span>' : '';
   const loLab = fmt(tr.id, S.fromT(tr, lo)), hiLab = fmt(tr.id, S.fromT(tr, hi));
-  const tLab = fmt(tr.id, r.target, 'target');
-  return `<div class="pf ${lvl(r.sim)}" title="${esc(`${tr.label}: ${fmt(tr.id, r.earth)} here, ${tLab} at the target, ${Math.round(r.sim * 100)}% match`)}">
-    <div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="vals">here ${fmt(tr.id, r.earth)} · target ${tLab}</div>
+  const tLab = fmt(tr.id, r.target, 'target'), eLab = fmt(tr.id, r.earth);
+  const beyond = below || above
+    ? `<div class="beyond">Beyond Earth: no land is ${below ? 'this low' : 'this high'}, so points go to places nearest Earth's ${below ? 'lowest' : 'highest'} values.</div>` : '';
+  return `<div class="pf" title="${esc(`${tr.label}: ${eLab} here, ${tLab} at the target, ${simTxt}`)}">
+    ${traitHead(r)}<div class="vals"><span class="ve">${esc(eLab)}</span> here, <span class="vt">${esc(tLab)}</span> at the target · ${simTxt}</div>
     <div class="sc"><svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/></svg>
       <i class="zn" style="left:${z0.toFixed(1)}%;width:${Math.max(0.6, z1 - z0).toFixed(1)}%"></i><i class="ax"></i>
-      <i class="e" style="left:${X(ev).toFixed(1)}%"></i><i class="t" style="left:${(below ? 0 : above ? 100 : tPos).toFixed(1)}%"></i>${arrow}</div>
-    <div class="ends"><span>${below ? `<b>‹ ${tLab}</b> · ` : ''}${loLab}</span><span>${hiLab}${above ? ` · <b>${tLab} ›</b>` : ''}</span></div></div>`;
+      <i class="t${below || above ? ' out' : ''}" style="left:${(below ? 0 : above ? 100 : X(tv)).toFixed(1)}%"></i><i class="e" style="left:${X(ev).toFixed(1)}%"></i></div>
+    <div class="ends"><span>${loLab}</span><span>${hiLab}</span></div>${beyond}</div>`;
 }
 
-function rationale(i) {
-  const rows = rowsFor(i).filter((r) => r.w > 0);
-  const strong = rows.filter((r) => r.sim >= 0.75).sort((a, b) => tell(b) - tell(a)).slice(0, 3).map((r) => r.tr.label.toLowerCase());
-  const weak = rows.filter((r) => r.sim < 0.4).sort((a, b) => b.w - a.w).slice(0, 1).map((r) => r.tr.label.toLowerCase());
-  const join = (a) => (a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0] || '');
-  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-  return (strong.length ? `${cap(join(strong))} match` : 'No trait matches strongly') + (weak.length ? `; ${weak[0]} does not.` : '.');
-}
-
+// How to read the points bar, under every list. Score gaps of a point or two are within what 28 km averages can tell apart.
+const BAR_KEY = '<span class="barkey"><span class="pbar key" aria-hidden="true"><span class="seg" style="flex-grow:3"><i style="width:80%"></i></span><span class="seg" style="flex-grow:2"><i style="width:40%"></i></span><span class="seg" style="flex-grow:1"><i style="width:100%"></i></span></span>Each bar is the 100 points of the score. A block is one aspect, as wide as the points it is worth for this purpose; <b class="blue">blue</b> is what the place earned. Treat scores a point or two apart as ties.</span>';
 function renderList() {
   $$('.tab').forEach((b) => b.classList.toggle('on', b.dataset.tab === state.tab));
   const ol = $('#list'); ol.innerHTML = '';
@@ -612,12 +638,12 @@ function renderList() {
     $('#listNote').innerHTML = (state.refine
       ? `The same ten places, re-ranked by the best <b>${S2.zoneKm} km landing zone</b> inside each 28 km cell, measured at <b>${S2.gsdM} m</b> against ${esc(shortName(state.target))}. <b>Computed, not field-validated.</b>`
       : `The ten best-matching places on Earth that are at least 150 km from every catalogued analog site. <b>Computed, not field-validated.</b>`)
-      + (T2 && nFine ? ` <button id="btnRefine" class="refine">${state.refine ? 'Back to the 28 km ranking' : `Refine these ten at ${S2.gsdM} m`}</button>` : '') + '<span class="barkey">Bars: how well each aspect matches, from empty (nothing alike) to full (identical).</span>';
+      + (T2 && nFine ? ` <button id="btnRefine" class="refine">${state.refine ? 'Back to the 28 km ranking' : `Refine these ten at ${S2.gsdM} m`}</button>` : '') + BAR_KEY;
     const br = $('#btnRefine'); if (br) br.onclick = () => { state.refine = !state.refine; if (state.detail) closeDetail(); rescore(); };
   } else {
     rows = state.known.map((k, r) => ({ k, rank: r + 1, type: TYPE_LABEL[k.k.types[0]] || k.k.types[0] }));
     const pcts = state.known.map((r) => r.pct).sort((a, b) => a - b), med = pcts[Math.floor(pcts.length / 2)] || 0;
-    $('#listNote').innerHTML = `${rows.length} sites that agencies and field teams already use, ranked by the same score. The search was never told where they are; their median rank is the <b>${Math.round(med)}th percentile</b> of Earth's land.`;
+    $('#listNote').innerHTML = `${rows.length} sites that agencies and field teams already use, ranked by the same score. The search was never told where they are; their median rank is the <b>${Math.round(med)}th percentile</b> of Earth's land.` + BAR_KEY;
   }
   // type filter: one row of choices, shown only on request
   const types = [...new Set(rows.map((r) => r.type))];
@@ -630,14 +656,15 @@ function renderList() {
   if (state.type) rows = rows.filter((r) => r.type === state.type);
   const total = rows.length;
   if (!isNew && !state.showAll) rows = rows.slice(0, 12);
-  for (const r of rows) {
+  rows.forEach((r, n) => {
     let li;
+    const as = aspects(rowsFor(r.c ? r.c.i : r.k.i)), bar = `${pointsBar(as, { labels: n === 0 })}<div class="loss">${esc(lossLine(as))}</div>`;
     if (r.c) {
       const p = S.placeName(D, r.c.i);
       li = el('li', 'item', `<span class="n">${String(r.rank).padStart(2, '0')}</span><div>
         <div class="t">${esc(p.title)}</div>
         <div class="w">${p.region ? esc(p.region) + ' · ' : ''}${latlon(r.c.lat, r.c.lon)}</div>
-        <div class="why" title="${esc(rationale(r.c.i))}"><span class="ty">${esc(r.type)}</span></div>${aspectBars(r.c.i)}
+        <div class="why"><span class="ty">${esc(r.type)}</span></div>${bar}
         <div class="pv">${state.refine
           ? (r.c.fine ? `Landing zone ${latlon(r.c.fine.lat, r.c.fine.lon)} · was ${String(r.c.rank1).padStart(2, '0')} at 28 km with ${Math.round(r.c.score)}` : 'No usable 30 m zone here (water, ice shelf or no data) · kept at its 28 km score')
           : `Computed candidate · ${Math.round(r.c.nearestKm).toLocaleString('en')} km from the nearest catalogued site`}</div></div>
@@ -649,14 +676,14 @@ function renderList() {
       li = el('li', 'item', `<span class="n">${String(r.rank).padStart(2, '0')}</span><div>
         <div class="t">${esc(k.name)}</div>
         <div class="w">${esc(k.country || '')} · ${latlon(k.lat, k.lon)}</div>
-        <div class="why"><span class="ty">${esc(r.type)}</span>${esc(k.note || '')}</div>${aspectBars(r.k.i)}
+        <div class="why"><span class="ty">${esc(r.type)}</span>${esc(k.note || '')}</div>${bar}
         <div class="pv">Field-validated analog${k.used_by ? ' · used by ' + esc(k.used_by) : ''} · source: ${esc(host(k.source))}</div></div>
         <span class="sc">${Math.round(r.k.score)}<small>of 100</small></span>`);
       li.onclick = () => openDetail({ i: r.k.i, site: k });
       li.dataset.key = 'k' + k.name;
     }
     ol.appendChild(li);
-  }
+  });
   const more = $('#btnMore'); more.hidden = isNew || state.showAll || total <= 12; more.textContent = `Show all ${total} sites`;
   markActive();
 }
@@ -679,7 +706,8 @@ function onHover(e) {
   const box = $('.map').getBoundingClientRect();
   tip.style.left = e.clientX - box.left + 'px'; tip.style.top = e.clientY - box.top + 'px';
   if (i < 0) { tip.hidden = true; return; }
-  tip.textContent = `${S.placeName(D, i).title} · ${Math.round(state.scores[i])} of 100`;
+  const v = state.scores[i], p = pctOf(v);
+  tip.innerHTML = `<b>${esc(S.placeName(D, i).title)}</b><br>${Math.round(v)} of 100 · better than ${Math.min(99.9, p).toFixed(p > 99 ? 1 : 0)}% of land`;
   tip.hidden = false;
 }
 
@@ -711,11 +739,12 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   const tb = $('#dTraits'); tb.innerHTML = ''; let group = '';
   for (const r of rows) {
     if (r.tr.group !== group) { group = r.tr.group; tb.appendChild(el('tr', '', `<td class="g" colspan="4">${esc(group)}</td>`)); }
-    const tag = r.w <= 0 ? 'not scored' : r.beyond ? 'Earth limit' : label(r.sim);
+    const tag = r.w <= 0 ? 'not scored' : `${Math.round(r.sim * 100)}%${r.beyond ? ', beyond Earth' : ''}`;
     tb.appendChild(el('tr', r.w <= 0 ? 'off' : '', `<td>${esc(r.tr.label)}</td><td>${fmt(r.tr.id, r.earth)}</td><td>${fmt(r.tr.id, r.target, 'target')}</td>
-      <td><span class="barx"><i class="${r.sim < 0.4 ? 'w' : ''}" style="width:${Math.round(r.sim * 100)}%"></i></span><span class="lbl">${tag}</span></td>`));
+      <td><span class="barx"><i style="width:${Math.round(r.sim * 100)}%"></i></span><span class="lbl">${tag}</span></td>`));
   }
-  drawProfile(rows, t.body);
+  const as = aspects(rows);
+  drawPoints(as, sc); drawProfile(as, t.body);
   const scored = rows.filter((r) => r.w > 0);
   const holds = scored.filter((r) => r.sim >= 0.75).sort((a, b) => tell(b) - tell(a));
   const weak = scored.filter((r) => r.sim < 0.4).sort((a, b) => b.w - a.w);
@@ -752,11 +781,12 @@ function drawFine(i) {
     [`Roughness over ${S2.lagsM[0]} m steps`, m(f.rough[0]), m(tz.rough[0])],
     [`Roughness over ${S2.lagsM[last]} m steps`, m(f.rough[last]), m(tz.rough[last])],
   ];
-  const bar = (name, v) => `<tr><td>${name}</td><td colspan="2"><span class="barx wide"><i class="${v < 0.4 ? 'w' : ''}" style="width:${Math.round(v * 100)}%"></i></span><span class="lbl">${label(v)}</span></td></tr>`;
+  const bar = (name, v) => `<tr><td>${name}</td><td colspan="2"><span class="barx wide"><i style="width:${Math.round(v * 100)}%"></i></span><span class="lbl">${Math.round(v * 100)}% similar</span></td></tr>`;
   $('#dFine').innerHTML = `
     <p class="finelead">The best <b>${S2.zoneKm} km</b> zone inside this cell is centred at <b>${latlon(f.lat, f.lon)}</b>. Its terrain scores <b>${Math.round(f.fine)} of 100</b> against the ${S2.zoneKm} km zone at ${esc(tn)}, both measured on a ${S2.gsdM} m grid. With the 28 km terrain traits replaced by these, the cell scores <b>${Math.round(s2)}</b> (it was ${Math.round(s1)} at 28 km).</p>
+    <div class="shift" role="img" aria-label="Score ${Math.round(s1)} at 28 km, ${Math.round(s2)} with 30 m terrain"><span>All traits at 28 km<b>${Math.round(s1)}</b></span><span class="to" aria-hidden="true"></span><span>Terrain from the 30 m zone<b>${Math.round(s2)}</b></span><span class="dlt">${Math.round(s2) >= Math.round(s1) ? 'up' : 'down'} ${Math.abs(Math.round(s2) - Math.round(s1))} points</span></div>
     <canvas id="fineChart" width="520" height="150" role="img" aria-label="Share of ground flatter than each slope, this zone against the target"></canvas>
-    <p class="pfkey"><span><i class="e"></i>This zone on Earth</span><span><i class="t"></i>${esc(tn)}</span><span class="dim">Share of ground flatter than each slope</span></p>
+    <p class="pfkey"><span><i class="ln"></i>This zone on Earth</span><span><i class="ln t"></i>${esc(tn)}</span><span class="dim">Read up from a slope to see the share of ground flatter than it. Curves that overlap mean the same mix of flat and steep ground.</span></p>
     <table class="traits fine"><thead><tr><th>At ${S2.gsdM} m</th><th>Earth zone</th><th>${esc(tn)}</th></tr></thead><tbody>
       ${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
       <tr><td class="g" colspan="3">Match</td></tr>${bar('Slope distribution', f.sim[0])}${bar('Roughness at four step lengths', f.sim[1])}${bar('Relief', f.sim[2])}
@@ -769,9 +799,9 @@ function drawFine(i) {
   const X = (v) => L + (v / xmax) * (W - L - R), Y = (p) => H - B - p * (H - B - Tp);
   g.font = `${10.5 * dpr}px system-ui`; g.fillStyle = 'rgba(242,238,232,.54)'; g.strokeStyle = 'rgba(242,238,232,.19)'; g.lineWidth = dpr;
   for (const p of [0, 0.5, 1]) { g.beginPath(); g.moveTo(L, Y(p)); g.lineTo(W - R, Y(p)); g.stroke(); g.textAlign = 'right'; g.fillText(`${p * 100}%`, L - 5 * dpr, Y(p) + 3.5 * dpr); }
-  g.textAlign = 'center'; for (let v = 0; v <= xmax; v += 5) g.fillText(`${v}°`, X(v), H - 6 * dpr);
+  g.textAlign = 'center'; for (let v = 0; v <= xmax; v += 5) g.fillText(v === xmax ? `${v}° slope` : `${v}°`, Math.min(X(v), W - R - 22 * dpr), H - 6 * dpr);
   const line = (q, col, dash) => { g.strokeStyle = col; g.lineWidth = 2 * dpr; g.setLineDash(dash); g.beginPath(); g.moveTo(X(0), Y(0)); q.forEach((v, k) => g.lineTo(X(Math.min(v, xmax)), Y(P[k]))); g.stroke(); g.setLineDash([]); };
-  line(tz.q, '#E8D9A8', [5 * dpr, 4 * dpr]); line(f.q, '#F2EEE8', []);
+  line(tz.q, '#d95926', [5 * dpr, 4 * dpr]); line(f.q, '#F2EEE8', []);
 }
 
 function closeDetail() {
