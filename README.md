@@ -4,7 +4,7 @@ Ground Truth is our NASA Space Apps Challenge 2026 project for the challenge "Id
 
 It scores every land cell on Earth (318,332 cells of 0.25 degrees, about 28 km) against a chosen place on the Moon or Mars. It ranks the best matches and flags new candidates that are far from every catalogued analog site. For each match it explains where the analogy holds, where it breaks down and how the site could help exploration. The data comes from NASA (LRO, MGS, POWER, Blue Marble), JAXA (GCOM-C, GSMaP, JASMES), ESA (WorldCover), USGS Astrogeology and Natural Earth.
 
-The method, data sources, validation and limitations are written up in [analog-finder/README.md](analog-finder/README.md). The results are in [analog-finder/FINDINGS.md](analog-finder/FINDINGS.md).
+The method, data sources, validation and limitations are written up in [analog-finder/README.md](analog-finder/README.md). The results are in [analog-finder/FINDINGS.md](analog-finder/FINDINGS.md). A plain walkthrough of how the app works, where every dataset comes from and what is in the data pack is in [analog-finder/HOW_IT_WORKS.md](analog-finder/HOW_IT_WORKS.md).
 
 ## Quick start (about 2 minutes)
 
