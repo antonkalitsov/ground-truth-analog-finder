@@ -92,7 +92,8 @@
 
     <section class="map" aria-label="Earth map">
       <div id="earth" class="earth"></div>
-      <div class="legend"><span>Match</span><i class="ramp"></i><span id="lgHi"></span></div>
+      <!-- Legend states both ends of the colour scale as scores, and says which share of land is coloured at all. -->
+      <div class="legend"><span class="lgt">Match score, best 25% of land</span><span class="lgr"><span id="lgLo"></span><i class="ramp"></i><span id="lgHi"></span></span></div>
       <div id="hoverTip" class="tip" hidden></div>
       <div id="loading" class="loading">Loading Earth…</div>
     </section>
@@ -108,8 +109,21 @@
       <p id="dProv" class="prov"></p>
 
       <h3>Match profile</h3>
-      <p class="pfkey"><span><i class="e"></i>This place on Earth</span><span><i class="t"></i><span id="pfBody">Target</span></span><span class="dim">Each line runs from the lowest to the highest value found on Earth's land</span></p>
+      <!-- Key for the trait scales below. Each scale is a small dot plot on Earth's own range (a "strip" with the
+           distribution behind it), so the reader sees where the place sits, where the target sits, and how unusual both are. -->
+      <div class="pfkey">
+        <span><i class="e"></i>This place on Earth</span>
+        <span><i class="t"></i><span id="pfBody">Target</span></span>
+        <span><i class="z"></i>Values that still score</span>
+        <span><i class="d"></i>How Earth's land is spread</span>
+      </div>
+      <p class="pfnote">Each scale runs from the lowest to the highest value found on 98% of Earth's land (the 1st to 99th percentile), with those ends written underneath. An arrow means the target lies beyond what Earth offers.</p>
       <div id="dProfile" class="profile"></div>
+
+      <div id="dFineBox" hidden>
+        <h3>Landing zone at 30 m</h3>
+        <div id="dFine"></div>
+      </div>
 
       <h3>Side by side</h3>
       <div class="chips">

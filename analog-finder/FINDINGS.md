@@ -29,6 +29,34 @@ Analogs chosen for their environment and terrain (deserts, polar sites, dry lava
 
 JAXA AMSR2 soil moisture was dropped: its retrieval reads high over sand seas (Sahara about 10-14 %) and is invalid under forest, and swapping it in lowered every geology AUC.
 
+
+## Stage 2 validation (30 m landing zones)
+
+The same sites and split as above, scored again with the 30 m landing zone (`pipeline/09b_stage2_validation.py`). Mars uses Jezero only, the one Mars target with a 30 m model; the Moon uses the best of its ten regions. Each site's 28 km cell gets its best 8 km zone, exactly as the app does. Nothing was tuned on these sites. The Netherlands polders have no usable zone (water) and are left out.
+
+AUC, analogs against clear non-analogs (0.5 = coin flip):
+
+| Mars, against Jezero (13 environment, 15 rock-only, 26 non-analogs) | Environment | Rock-only | All analogs |
+|---|---|---|---|
+| Terrain only, 28 km | 0.78 | 0.73 | 0.75 |
+| Terrain only, 30 m zone | 0.55 | 0.63 | 0.60 |
+| Full score, 28 km | 0.72 | 0.74 | 0.73 |
+| Full score, 30 m terrain | 0.69 | 0.67 | 0.68 |
+
+| Moon, best of ten regions (5 environment, 13 rock-only, 26 non-analogs) | Environment | Rock-only | All analogs |
+|---|---|---|---|
+| Terrain only, 28 km | 0.62 | 0.71 | 0.68 |
+| Terrain only, 30 m zone | 0.56 | 0.76 | 0.71 |
+| Full score, 28 km | 0.82 | 0.70 | 0.74 |
+| Full score, 30 m terrain | 0.85 | 0.70 | 0.74 |
+
+What this says:
+
+- **30 m terrain is a locator, not a detector.** On its own it separates Mars analogs from non-analogs less well than the 28 km terrain (0.60 against 0.75). Jezero's floor is gentle, and almost any plain, including farmland, steppe and taiga, contains an 8 km patch with the same slopes. What makes those places poor analogs is vegetation, water and climate, which the 30 m step does not measure.
+- **The full score holds.** With climate, cover and rock kept from stage 1, swapping in the 30 m terrain changes the Moon result very little (0.74 to 0.74; environment analogs 0.82 to 0.85) and lowers Mars a little (0.73 to 0.68).
+- **So the two stages do different jobs.** Stage 1 decides which places are analogs; stage 2 only re-orders its ten candidates, which have already passed the climate and cover test, and points to the best 8 km inside each. It should not be used to search the whole Earth on terrain alone.
+- Picking the best of up to 121 zones per cell favours every place a little, which is part of why terrain alone loses contrast at 30 m.
+
 ## Shackleton rim / Connecting Ridge (Moon), preset: Polar base operations
 
 | # | New candidate | Lat, lon | Score | Strong traits | Weak traits | Nearest known analog |

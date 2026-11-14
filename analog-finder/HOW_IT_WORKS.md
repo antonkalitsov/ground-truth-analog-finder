@@ -76,6 +76,23 @@ NASA Planetary Analog Explorer, Foucher et al. 2021, and the "Terrestrial analog
 9. `07_build_pack.py` quantizes everything into the web data pack and writes `manifest.json`.
 10. `07c_hires_images.py` makes the sharper close-ups and the 8k Earth image. `06c_moon_texture_pole.py` patches the Moon texture.
 11. `08_findings.py` runs the validation and writes `FINDINGS.md` and `findings.json`.
+12. `09_stage2.py` re-ranks the top 10 candidates at 30 m for Jezero and the ten Moon regions (see section 4b) and writes `stage2.json`. It reads everything it needs straight from public buckets, so it needs no files in `raw/` except the 10 MB Jezero terrain model it downloads itself. `09b_stage2_validation.py` then scores the validation sites at 30 m and adds the result to `stage2.json` and FINDINGS.md.
+
+## 4b. Stage 2: from a 28 km cell to an 8 km landing zone
+
+A rover does not land on a 28 km square. Stage 2 keeps the stage 1 search as the screen and then looks inside each of its ten best cells.
+
+| Step | What happens |
+|---|---|
+| Targets | Jezero (Mars 2020 CTX terrain model, 20 m, USGS) and the nine Artemis III regions plus Shackleton's ridge (LRO LOLA, 30 m). Each target is described by an 8 km zone around its coordinates. |
+| Candidates | The script repeats the app's scoring and picking for all six purposes, so every cell the app can list as a top 10 candidate for these targets is covered (about 20 to 40 cells per target). |
+| Earth data | A 30 km window of Copernicus GLO-30 (ESA, 30 m, AWS Open Data) around each cell, with its water mask. |
+| One grid | All three worlds are resampled to the same 30 m local grid and smoothed with the same 3 x 3 mean. |
+| Sliding zone | An 8 km disc (the Perseverance landing ellipse is 7.7 x 6.6 km) moves across the 28 km cell in 2 km steps: 121 placements. Placements with more than 2% water or missing data are dropped. |
+| Measured | Slope distribution (60 m baseline), RMS height difference at 60, 150, 300 and 900 m steps, and relief (95th minus 5th percentile). |
+| Kept | The placement closest to the target zone: 0.4 slope + 0.4 roughness + 0.2 relief. Its centre, numbers and the three similarities go into `stage2.json`. |
+
+In the app, "Refine these ten at 30 m" re-ranks the list. The score is the stage 1 weighted average with the three coarse terrain similarities replaced by the 30 m ones, so the chosen purpose still applies. The detail card shows the zone's coordinates, a slope curve against the target and a table, and both close-ups show the zone as a circle. Targets picked by hand, the other Mars sites and custom weights that surface a cell outside the precomputed set are not refined.
 
 ## 5. What is in the data pack (`web/data/`, about 6 MB)
 
@@ -88,6 +105,7 @@ NASA Planetary Analog Explorer, Foucher et al. 2021, and the "Terrestrial analog
 | `manifest.json` | 0.07 MB | trait definitions (range, tolerance, Earth percentiles), purposes and weights, body constants, 25 targets with trait vectors, 107 known sites, sources |
 | `chips/*.bin.gz` | 3.5 MB | 28 km elevation close-ups of the named Moon and Mars sites (int16, 512 px Moon, 256 px Mars) |
 | `findings.json` | 0.01 MB | validation numbers |
+| `stage2.json` | about 0.1 MB | per fine target: its 8 km zone statistics and, for each candidate cell, the best 30 m landing zone |
 
 Images in `web/assets/`: `earth.jpg` (4k) and `earth_8k.jpg` (8k, loaded after the first paint), `moon.jpg`, `mars.jpg`, `moon_spole.jpg`. Fonts in `web/fonts/`.
 
@@ -113,5 +131,7 @@ Known analog sites are ranked against ordinary land without the search ever bein
 ## 9. Known limits
 
 - Candidates are 28 km averages. Features smaller than a cell are not seen. They are tagged "Approximate".
+- Stage 2 is a locator, not a detector: on its own, 30 m terrain separates known Mars analogs from non-analogs worse than the 28 km terrain (AUC 0.60 against 0.75), because most plains contain a Jezero-like 8 km patch. The full score holds (Mars 0.73 to 0.68, Moon 0.74 to 0.74). See FINDINGS.md.
+- Stage 2 refines terrain only, for Jezero and the Moon regions only. At 30 m it sees slopes and landforms, not rocks. GLO-30 (radar), CTX (stereo) and LOLA (laser tracks, sparser away from the pole) have different noise, which the shared 3 x 3 smoothing reduces but does not remove.
 - Mars close-ups are limited by the 463 m MOLA pixels. Earth close-ups poleward of 60 N are coarse.
 - Moon traits beyond Earth (cold, vacuum, gravity, radiation) cannot be matched anywhere on Earth. The detail card says so under "Where it breaks down".

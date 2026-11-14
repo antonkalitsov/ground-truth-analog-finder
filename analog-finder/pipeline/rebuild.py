@@ -1,4 +1,4 @@
-"""Rebuild the whole data pack from public sources: download everything, then run pipeline steps 01 to 08 in order.
+"""Rebuild the whole data pack from public sources: download everything, then run pipeline steps 01 to 09 in order.
 Usage (from anywhere): python analog-finder/pipeline/rebuild.py
 Needs the packages in requirements.txt, about 8 GB of free disk and a few hours (mostly downloads).
 Safe to re-run: downloads and the slow steps are skipped when their output already exists.
@@ -42,6 +42,8 @@ def main():
     run("07_build_pack.py", RAW, WEB)
     run("07c_hires_images.py", RAW, WEB)
     run("08_findings.py", RAW, WEB, os.path.join(APP, "FINDINGS.md"))
+    run("09_stage2.py", RAW, WEB)
+    run("09b_stage2_validation.py", WEB, RAW)
     print("\nRebuild finished. Start the app with start.bat (Windows) or start.sh (Mac/Linux).")
 
 
