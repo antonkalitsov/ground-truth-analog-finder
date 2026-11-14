@@ -145,14 +145,27 @@ def moon_model(lat, elev, slope, rough, relief, ice_flag=None, rock=None, divine
                 temp=temp, trange=trange, sun=mean_noon_sun_elevation(lat, 1.54), ice=ice, dry=z, soil=z, dust=z, wind=z, pressure=z,
                 ndvi=z, rock=np.full_like(a, FAMILY.index("highland")) if rock is None else np.asarray(rock, np.float64))
 
+def blend_sim(e, tv, tol, lo, hi, quant):
+    """Similarity (0..1) of Earth values e to target tv, all in transformed units; see score() for the rule."""
+    e = np.asarray(e, np.float64)
+    close = np.clip(1 - np.abs(e - tv) / tol, 0, 1)
+    if lo <= tv <= hi:
+        return close
+    F = np.interp(e, quant, np.linspace(0, 1, 101))
+    extreme = np.clip(1 - 2 * (F if tv < lo else 1 - F), 0, 1)
+    b = min(1.0, (lo - tv if tv < lo else tv - hi) / tol)
+    return (1 - b) * close + b * extreme
+
 def score(earth_t, target_t, weights, earth_lo, earth_hi, quant):
     """earth_t: dict tid -> transformed arrays; target_t: dict tid -> transformed scalar; quant: tid -> 101 Earth percentiles.
-    In range: sim = 1 - |earth - target| / tolerance (clipped to 0..1).
-    Target beyond what Earth offers (outside Earth's 1st..99th percentile): sim = 1 - 2 * F, where F is the fraction of
-    Earth's land that is more extreme in the target's direction than this cell. Earth's most extreme places score 1 and
-    the median place 0, so the trait still ranks places toward the target (the UI flags it as 'beyond Earth')."""
+    Per trait, two measures (both clipped to 0..1):
+      closeness  C = 1 - |earth - target| / tolerance
+      extremity  X = 1 - 2 * F, F = fraction of Earth's land more extreme in the target's direction than this cell
+                 (Earth's most extreme places score 1, the median place 0)
+    sim = (1 - b) * C + b * X, with b = (distance of the target beyond Earth's 1st..99th percentile range) / tolerance,
+    capped at 1. Inside Earth's range b = 0 (pure closeness); one tolerance or more beyond it b = 1 (pure extremity, the
+    UI flags the trait as 'beyond Earth'). In between the two blend, so nearby targets always get nearby scores."""
     num = 0; den = 0; sims = {}
-    pc = np.linspace(0, 1, 101)
     for t in TRAITS:
         tid, tol = t[0], t[7]
         w = weights.get(tid, 0)
@@ -160,11 +173,7 @@ def score(earth_t, target_t, weights, earth_lo, earth_hi, quant):
         tv = target_t[tid]; e = earth_t[tid]
         if t[4] == "cat":
             s = ROCK_MATRIX[int(tv)][np.clip(np.asarray(e).astype(int), 0, len(GLIM) - 1)]
-        elif tv < earth_lo[tid]:
-            F = np.interp(e, quant[tid], pc); s = np.clip(1 - 2 * F, 0, 1)
-        elif tv > earth_hi[tid]:
-            F = 1 - np.interp(e, quant[tid], pc); s = np.clip(1 - 2 * F, 0, 1)
         else:
-            s = np.clip(1 - np.abs(e - tv) / tol, 0, 1)
+            s = blend_sim(e, tv, tol, earth_lo[tid], earth_hi[tid], quant[tid])
         sims[tid] = s; num = num + w * s; den += w
     return 100 * num / den, sims

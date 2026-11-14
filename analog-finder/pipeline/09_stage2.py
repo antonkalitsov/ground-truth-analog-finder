@@ -41,6 +41,7 @@ from rasterio.crs import CRS
 from rasterio.transform import from_origin
 from rasterio.warp import reproject, Resampling
 from scipy.ndimage import uniform_filter
+import traits as T
 
 os.environ.setdefault("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR")
 os.environ.setdefault("GDAL_HTTP_MAX_RETRY", "4")
@@ -170,12 +171,7 @@ class Pack:
         if tr["transform"] == "cat":
             row = self.man["rock"]["matrix"][int(round(tv))]
             return np.array([row[int(round(v))] if int(round(v)) < len(row) and row[int(round(v))] is not None else 0 for v in e], np.float64)
-        pct = np.linspace(0, 1, 101)
-        if tv < tr["earthLo"]:
-            return np.maximum(0, 1 - 2 * np.interp(e, tr["quant"], pct))
-        if tv > tr["earthHi"]:
-            return np.maximum(0, 1 - 2 * (1 - np.interp(e, tr["quant"], pct)))
-        return np.maximum(0, 1 - np.abs(e - tv) / tr["tol"])
+        return T.blend_sim(e, tv, tr["tol"], tr["earthLo"], tr["earthHi"], tr["quant"])
 
     def score(self, target, weights):
         out = np.zeros(self.n, np.float32); wsum = 0.0
