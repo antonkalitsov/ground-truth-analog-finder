@@ -70,7 +70,7 @@ MARS_SITE_ROCK = {
 PRESETS = {
     "overall":     ("Overall analog",          "Every trait counts equally (air pressure excluded: no place on Earth comes close).",
                     dict(slope=1, rough=1, relief=1, albedo=1, bare=1, icecover=1, temp=1, trange=1, sun=1, ice=1, dry=1, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=1, rock=0.25)),
-    "landing":     ("Rover & landing tests",   "Terrain that drives, lands and navigates like the target: slope, roughness, relief, bare loose ground.",
+    "landing":     ("Rover & landing terrain (regional)", "Regional terrain like the target's: kilometre-scale slope, roughness and relief over bare, loose ground. A first screen for where to look for rover and landing test areas; lander-scale hazards (metre-scale slopes, rocks, small craters) are not measured.",
                     dict(slope=3, rough=3, relief=2, albedo=0.5, bare=1.5, icecover=0.5, temp=0.3, trange=0.3, sun=0.3, ice=0.3, dry=0.5, soil=0.5, dust=1, wind=0.3, pressure=0, ndvi=0.5, rock=0.5)),
     "polar":       ("Polar base operations",   "Low sun, long shadows, cold and ice nearby: lighting, power and thermal design for a south-pole base.",
                     dict(slope=1, rough=0.5, relief=1.5, albedo=0.5, bare=1, icecover=1, temp=2, trange=1, sun=3, ice=1.5, dry=0.5, dust=0.3, wind=0.3, pressure=0, ndvi=0.3, rock=0.5)),

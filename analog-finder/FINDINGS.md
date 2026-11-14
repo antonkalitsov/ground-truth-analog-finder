@@ -68,7 +68,7 @@ Beyond anything on Earth (ranked toward Earth's most extreme places): Mean slope
 Best-ranked known analog for this target: Salar Grande (100.0th percentile).
 Beyond anything on Earth (ranked toward Earth's most extreme places): Mean slope, Roughness, Local relief, Mean temperature, Day-night swing, Noon sun elevation, Precipitation, Soil moisture, Mean wind, Plant greenness (NDVI). Never reproducible: gravity (1.62 m/s2), vacuum or thin air, surface radiation.
 
-## Slater Plain (Moon), preset: Rover & landing tests
+## Slater Plain (Moon), preset: Rover & landing terrain (regional)
 
 | # | New candidate | Lat, lon | Score | Strong traits | Weak traits | Nearest known analog |
 |---|---|---|---|---|---|---|
@@ -107,7 +107,7 @@ Beyond anything on Earth (ranked toward Earth's most extreme places): Mean slope
 Best-ranked known analog for this target: Yungay, Atacama Desert (99.9th percentile).
 Beyond anything on Earth (ranked toward Earth's most extreme places): Mean temperature, Day-night swing, Precipitation, Soil moisture, Plant greenness (NDVI). Never reproducible: gravity (3.71 m/s2), vacuum or thin air, surface radiation.
 
-## Gale crater (Curiosity) (Mars), preset: Rover & landing tests
+## Gale crater (Curiosity) (Mars), preset: Rover & landing terrain (regional)
 
 | # | New candidate | Lat, lon | Score | Strong traits | Weak traits | Nearest known analog |
 |---|---|---|---|---|---|---|

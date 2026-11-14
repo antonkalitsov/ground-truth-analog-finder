@@ -118,6 +118,7 @@ Every official dataset was checked against this validation. JAXA Diviner, GCOM-C
 ## Limitations
 
 * 28 km cells: small craters, lava tubes and outcrops are invisible at this scale; use the live terrain close-up and field data to confirm.
+* Terrain traits are kilometre-scale (1.85 km pixels in a 28 km window; Mars targets on 1° cells). They say whether a region's landscape resembles the target's, not whether a lander or rover could safely set down there: lander-scale slope, rock abundance, small-crater density and bearing strength are not measured. The "Rover & landing terrain" preset is a first screen for where to look, and a test site still has to be chosen from high-resolution data and a field survey.
 * Moon temperature and ice come from LRO Diviner; the Moon day-night swing is approximated as 2 × (maximum − mean). Mars thermal, ice, dust and wind traits are published averages by latitude, not climate-model output. Moon coverage is 75–90°S.
 * Artemis III region coordinates are approximate points inside each region (NASA has not published centres).
 * Rock type is a first-level class (basalt, granite, sandstone and so on), not mineralogy; no accessibility, permits or logistics layer.

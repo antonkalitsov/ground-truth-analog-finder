@@ -113,5 +113,6 @@ Known analog sites are ranked against ordinary land without the search ever bein
 ## 9. Known limits
 
 - Candidates are 28 km averages. Features smaller than a cell are not seen. They are tagged "Approximate".
+- Slope, roughness and relief are measured at kilometre scale, so they describe the landscape, not landing safety. Lander-scale slopes, boulders and small craters are not measured, and a specific landing or rover test spot still needs high-resolution data and a field survey.
 - Mars close-ups are limited by the 463 m MOLA pixels. Earth close-ups poleward of 60 N are coarse.
 - Moon traits beyond Earth (cold, vacuum, gravity, radiation) cannot be matched anywhere on Earth. The detail card says so under "Where it breaks down".
