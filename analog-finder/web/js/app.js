@@ -45,11 +45,11 @@ const shortName = (t) => t.name.replace(/\s*\(.*?\)\s*/g, ' ').trim();
 const bodyName = (b) => (b === 'moon' ? 'the Moon' : 'Mars');
 const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
 const presetById = (id) => D.man.presets.find((p) => p.id === id);
-const PURPOSE = { overall: 'an all-round comparison', landing: 'rover and landing tests', polar: 'polar base operations', isru: 'ice prospecting and ISRU', instruments: 'instrument and remote-sensing tests', crew: 'crew and EVA training' };
+const PURPOSE = { overall: 'an all-round comparison', landing: 'regional terrain screening for rover and landing tests', polar: 'polar base operations', isru: 'ice prospecting and ISRU', instruments: 'instrument and remote-sensing tests', crew: 'crew and EVA training' };
 
 const USE = {
-  slope: 'rover traverse, wheel slip and landing-hazard tests on comparable slopes',
-  rough: 'hazard-avoidance and landing-sensor tests on a surface just as rough',
+  slope: 'rover traverse and mobility tests across regional slopes like the target\'s (kilometre scale; check lander-scale slopes on site)',
+  rough: 'terrain-relative navigation tests over similarly broken kilometre-scale topography (boulders and small craters are not measured)',
   relief: 'navigation, line-of-sight and communication tests among similar hills and crater walls',
   albedo: 'camera exposure and orbital remote-sensing calibration on a surface just as bright',
   bare: 'instrument, drill and sampling tests on bare ground without plant cover',
@@ -653,6 +653,7 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   $('#dHolds').innerHTML = holds.length ? holds.slice(0, 5).map((r) => `<li><b>${esc(r.tr.label)}</b>: ${fmt(r.tr.id, r.earth)} here, ${fmt(r.tr.id, r.target, 'target')} on ${where}${r.beyond ? ' (as close as Earth gets)' : ''}</li>`).join('') : '<li>No trait is a strong match at this cell.</li>';
   const B = D.man.bodies[t.body], Eb = D.man.bodies.earth;
   const breaks = weak.slice(0, 4).map((r) => `<li><b>${esc(r.tr.label)}</b>: ${fmt(r.tr.id, r.earth)} here, ${fmt(r.tr.id, r.target, 'target')} on ${where}${r.beyond ? `. Beyond anything on Earth, whose extreme 1% is ${fmt(r.tr.id, S.fromT(r.tr, r.target < S.fromT(r.tr, r.tr.earthLo) ? r.tr.earthLo : r.tr.earthHi))}` : ''}</li>`);
+  breaks.push(`<li class="muted"><b>Scale</b>: terrain is compared as 28 km averages${t.body === 'mars' ? ' (Mars targets come from 1° cells, up to about 59 km across)' : ''}. Lander-scale slopes, boulders and small craters are not measured, so survey a specific spot before using it for landing or rover tests.</li>`);
   breaks.push(`<li class="muted"><b>Gravity</b>: ${B.gravity} m/s² there, ${Eb.gravity} m/s² here. No place on Earth reproduces it.</li>`);
   breaks.push(`<li class="muted"><b>Atmosphere</b>: ${fmt('pressure', S.earthValue(D, 'pressure', i))} of air here, ${t.body === 'moon' ? 'hard vacuum' : '0.6 kPa of CO₂'} there.</li>`);
   breaks.push(`<li class="muted"><b>Radiation</b>: ${esc(B.radiation)}, against ${esc(Eb.radiation)}.</li>`);
@@ -806,7 +807,7 @@ async function runTour() {
     { t: 'shackleton-connecting-ridge', p: 'polar', c: 'Artemis III will land near the lunar south pole. <b>Where on Earth behaves like Shackleton\'s rim?</b>' },
     { c: 'We score all <b>318,332</b> land cells on Earth on 17 traits: terrain, rock, sunlight, cold, ice, dryness, life.', wait: 4200, zoomOut: true },
     { cand: 0, c: 'Low sun, deep cold and bare rocky relief point to <b>Peary Land, North Greenland</b>: 850 km from the nearest catalogued analog.' },
-    { t: 'slater-plain', p: 'landing', cand: 0, c: 'Change the mission to <b>rover &amp; landing tests</b> for Slater Plain, and the answer moves to the dry Andes.' },
+    { t: 'slater-plain', p: 'landing', cand: 0, c: 'Change the mission to <b>rover &amp; landing terrain</b> for Slater Plain, and the answer moves to the dry Andes.' },
     { t: 'jezero-perseverance', p: 'overall', cand: 0, c: 'On Mars, Jezero crater\'s closest Earth match is in the eastern Sahara, not one of the usual test sites.' },
     { t: 'arcadia-planitia', p: 'isru', cand: 0, c: 'For ice prospecting at Arcadia Planitia, the Tibetan Plateau\'s frozen dry ground wins.' },
     { c: 'Every match says where the analogy holds, where it breaks, and how it helps exploration. <b>Ground Truth: open data, any browser.</b>', wait: 5000 },
@@ -841,7 +842,7 @@ async function openAbout() {
     <li><b>Same ruler on three worlds.</b> Slope, roughness and relief are measured the same way on Earth, the Moon (LRO LOLA) and Mars (MGS MOLA): elevation at about 1.85 km pixels, 15 × 15 pixel window.</li>
     <li><b>Targets.</b> The nine Artemis III candidate regions and Shackleton's rim, plus 15 Mars landing, human-mission and cave sites. Or click any point on either map.</li>
     <li><b>Similarity.</b> Per trait, 1 − |Earth − target| / tolerance. When the target is beyond anything on Earth (−150 °C, a 2° noon sun), the trait ranks places toward Earth's own extreme and the card says "Earth limit". Rock type uses a published-geology lookup table (how well each Earth rock class stands in for each target rock family).</li>
-    <li><b>Mission presets</b> weight traits for what the analog is <i>for</i> (Foucher et al. 2021 "functional analogues"): rover and landing tests, polar base operations, ice prospecting, instruments, crew training.</li>
+    <li><b>Mission presets</b> weight traits for what the analog is <i>for</i> (Foucher et al. 2021 "functional analogues"): regional terrain for rover and landing tests, polar base operations, ice prospecting, instruments, crew training.</li>
     <li><b>New candidates</b> are the best cells at least 300 km apart and more than 150 km from all 107 catalogued analog sites, so Antarctica, Atacama, Iceland and Hawaii only show up when they genuinely win.</li>
   </ol>
   <h3>The challenge's considerations, one by one</h3>
