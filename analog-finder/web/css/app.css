@@ -7,6 +7,10 @@
 :root {
   --bg: #14181B; --bg2: #1B2023; --ink: #F2EEE8; --dim: rgba(242,238,232,.76); --faint: rgba(242,238,232,.54);
   --line: rgba(242,238,232,.19); --accent: #E8D9A8; --terra: #C0704F;
+  /* Data colours, one job each (checked for colour-blind separation on --bg):
+     --score  blue: match score and points earned, on the map and in every bar
+     --target orange: the Moon or Mars target;  the Earth place is plain ink (--ink) */
+  --score: #3987e5; --score-lt: #86b6ef; --target: #d95926; --track: rgba(242,238,232,.11);
   --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --in: cubic-bezier(0.16, 1, 0.3, 1);      /* weighted entrance */
@@ -152,13 +156,19 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .item .w { font-size: 12.5px; color: var(--dim); margin-top: 3px; }
 .item .why { font-size: 13.5px; margin-top: 8px; max-width: 46ch; }
 .item .ty { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-right: 8px; }
-/* aspect meters: one short bar per group of traits, so a row can be compared at a glance instead of read */
-.asp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px 12px; margin-top: 11px; max-width: 330px; }
-.asp span { display: block; font-size: 10.5px; letter-spacing: .04em; color: var(--dim); white-space: nowrap; }
-.asp i { display: block; height: 3px; margin-top: 4px; background: var(--line); overflow: hidden; }
-.asp b { display: block; height: 100%; background: #8d8a84; transform-origin: 0 50%; }
-.asp .hi b { background: var(--accent); } .asp .lo b { background: var(--terra); }
-.asp .hi { color: var(--ink); }
+/* points bar: the 100 points of the score, one block per aspect (width = points it is worth), blue = points earned.
+   2 px gaps keep the blocks apart without colour; the same order is used on every row and in the card. */
+.pbar { display: flex; gap: 2px; margin-top: 11px; max-width: 360px; }
+.pbar .seg { position: relative; flex: 1 1 0; min-width: 3px; height: 8px; background: var(--track); border-radius: 2px; overflow: hidden; }
+.pbar .seg i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--score); }
+.pbar.lab { margin-bottom: 15px; }
+.pbar.lab .seg { overflow: visible; }
+.pbar.lab .seg i { border-radius: 2px 0 0 2px; }
+.pbar em { position: absolute; left: 0; top: 11px; font: 400 10.5px/1 var(--sans); font-style: normal; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pbar.key { display: inline-flex; width: 54px; margin: 0 8px 0 0; vertical-align: 0; }
+.pbar.key .seg { height: 6px; }
+.blue { color: var(--score-lt); font-weight: 500; }
+.item .loss { font-size: 12.5px; color: var(--dim); margin-top: 6px; }
 .item .pv { font-size: 12px; color: var(--faint); margin-top: 7px; }
 .item .sc { font: 400 26px/1 var(--serif); padding-top: 2px; text-align: right; }
 .item .sc small { display: block; font: 400 10.5px/1.6 var(--sans); letter-spacing: .08em; color: var(--faint); text-transform: uppercase; }
@@ -171,7 +181,10 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .legend { position: absolute; left: 22px; bottom: 18px; display: flex; align-items: center; gap: 9px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); pointer-events: none; }
 .legend { flex-direction: column; align-items: flex-start; gap: 5px; }
 .lgr { display: flex; align-items: center; gap: 8px; letter-spacing: 0; font-variant-numeric: tabular-nums; color: var(--ink); }
-.ramp { width: 120px; height: 3px; background: linear-gradient(90deg, rgba(192,112,79,.2), #C0704F 40%, #E8D9A8); }
+.ramp { display: block; width: 180px; height: 8px; border-radius: 2px; background: linear-gradient(90deg, rgba(16,66,129,.15), rgba(28,92,171,.6) 25%, #3987e5 55%, #86b6ef 85%, #cde2fb); }
+.legend .lgr { width: 180px; justify-content: space-between; font-size: 11.5px; }
+.legend .lgn { letter-spacing: 0; text-transform: none; color: var(--faint); font-size: 11.5px; }
+.legend { background: rgba(20,24,27,.72); padding: 8px 10px; margin-left: -10px; border-radius: 3px; }
 .tip { position: absolute; z-index: 6; pointer-events: none; background: var(--bg); border: 1px solid var(--line); padding: 5px 9px; font-size: 12px; transform: translate(14px, 14px); white-space: nowrap; }
 .loading { position: absolute; inset: 0; display: grid; place-content: center; color: var(--dim); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; background: var(--bg); transition: opacity .5s; }
 .loading.done { opacity: 0; pointer-events: none; }
@@ -209,38 +222,54 @@ body.moon #tgtMars, body.mars #tgtMoon { visibility: hidden; pointer-events: non
 .pfkey { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 12px; margin-bottom: 4px; }
 .pfkey i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -1px; }
 .pfkey i.e, .pf .e { border-radius: 50%; background: var(--ink); }
-.pfkey i.t, .pf .t { border: 1.5px solid var(--accent); background: var(--bg); transform: rotate(45deg); }
+.pfkey i.t, .pf .t { border: 2px solid var(--target); background: var(--bg); transform: rotate(45deg); }
+.pfkey i.ln { width: 16px; height: 0; border-top: 2px solid var(--ink); vertical-align: 3px; }
+.pfkey i.ln.t { border: 0; border-top: 2px dashed var(--target); background: none; transform: none; }
+/* ranked points decomposition at the top of the card */
+.points { display: grid; gap: 2px; }
+.prow { display: grid; grid-template-columns: 112px minmax(0, 1fr) 70px; align-items: center; gap: 12px; padding: 5px 0; color: inherit; text-decoration: none; font-size: 13px; }
+a.prow:hover .pn { color: var(--accent); }
+.prow .pt { display: block; height: 10px; background: var(--track); border-radius: 2px; overflow: hidden; }
+.prow .pt i { display: block; height: 100%; background: var(--score); }
+.prow .pv { text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.prow .pv b { color: var(--ink); font-weight: 500; }
+.prow.tot { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 8px; }
+.prow.tot .pn { font-weight: 500; }
+.lossd { font-size: 13.5px; margin-top: 8px; }
 .profile { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
 .pfg { padding: 14px 0 12px; border-top: 1px solid var(--line); }
 .pfg header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
 .pfg header b { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
-.pfg header span { font: 400 22px/1 var(--serif); font-variant-numeric: tabular-nums; }
-.pfg.hi header span { color: var(--accent); } .pfg.lo header span { color: var(--terra); }
+.pfg header span { font-size: 12.5px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.pfg header span b, .pf .l span b { font: 400 20px/1 var(--serif); color: var(--ink); }
+.pf .l span b { font-size: 15px; }
+.pfg { scroll-margin-top: 12px; }
 .pf { padding: 6px 0 3px; }
 .pf .l { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; }
 .pf .l span { color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pf.off { opacity: .4; }
 /* trait scale: distribution (grey hill), scoring zone (accent band), this place (dot), target (diamond), ends labelled */
-.pfkey i.z { width: 14px; height: 8px; background: rgba(232,217,168,.22); border-top: 1px solid rgba(232,217,168,.6); }
-.pfkey i.d { width: 14px; height: 8px; background: rgba(242,238,232,.16); clip-path: polygon(0 100%, 30% 20%, 60% 55%, 100% 100%); }
+.pfkey i.z { width: 14px; height: 8px; background: rgba(57,135,229,.28); border-top: 1px solid var(--score); }
 .pfnote { font-size: 12px; color: var(--dim); margin: 2px 0 6px; max-width: 64ch; }
 .pf .sc { position: relative; height: 26px; margin-top: 4px; }
 .pf .sc svg { position: absolute; left: 0; right: 0; bottom: 6px; width: 100%; height: 16px; display: block; }
 .pf .sc svg path { fill: rgba(242,238,232,.13); }
 .pf .sc .ax { position: absolute; left: 0; right: 0; bottom: 6px; height: 1px; background: #4a5154; }
-.pf .sc .zn { position: absolute; bottom: 6px; height: 16px; background: rgba(232,217,168,.13); border-top: 1px solid rgba(232,217,168,.45); }
+.pf .sc .zn { position: absolute; bottom: 6px; height: 16px; background: rgba(57,135,229,.22); border-top: 1px solid rgba(57,135,229,.8); }
+.pf .sc .e { box-shadow: 0 0 0 2px var(--bg); }
+.pf .ve { color: var(--ink); font-weight: 500; } .pf .vt { color: var(--target); font-weight: 500; }
+.pf .beyond { font-size: 11.5px; color: var(--dim); margin-top: 4px; padding-left: 8px; border-left: 2px solid var(--target); max-width: 52ch; }
 .pf .sc .e, .pf .sc .t { position: absolute; bottom: 2px; width: 9px; height: 9px; margin-left: -4.5px; }
 .pf .sc .t { bottom: 1.5px; width: 10px; height: 10px; margin-left: -5px; }
-.pf .sc .ar { position: absolute; bottom: 0; font-size: 12px; line-height: 12px; color: var(--accent); }
 .pf .ends { display: flex; justify-content: space-between; gap: 8px; font-size: 10.5px; color: var(--faint); font-variant-numeric: tabular-nums; margin-top: 1px; }
-.pf .ends b { font-weight: 500; color: var(--accent); }
 .pf .vals { font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; margin-top: 1px; }
 .pf .sim { font-size: 11px; color: var(--faint); margin-left: 6px; }
 .pf .cat { font-size: 12.5px; color: var(--dim); margin-top: 3px; }
 .bul { list-style: none; padding: 0; display: grid; gap: 7px; font-size: 14px; max-width: 68ch; }
 .bul li { padding-left: 16px; position: relative; }
 .bul li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 1px; background: var(--accent); }
-.bul.brk li::before { background: var(--terra); }
+.bul li::before { background: var(--score); }
+.bul.brk li::before { background: var(--target); }
 .bul b { font-weight: 500; }
 .bul .muted { color: var(--dim); }
 .more-d { margin-top: 26px; border-top: 1px solid var(--line); }
@@ -255,8 +284,14 @@ table { border-collapse: collapse; width: 100%; font-size: 13px; }
 .traits td.g { border: 0; padding-top: 14px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
 .traits tr.off td { color: var(--faint); }
 .barx { display: inline-block; width: 64px; height: 3px; background: var(--line); vertical-align: middle; margin-right: 8px; }
-.barx i { display: block; height: 100%; background: var(--accent); }
-.barx i.w { background: var(--terra); }
+.barx i { display: block; height: 100%; background: var(--score); }
+/* 30 m section: the score before and after the terrain is re-measured */
+.shift { display: flex; align-items: flex-end; gap: 14px; margin: 14px 0 16px; font-size: 12px; color: var(--dim); }
+.shift > span:not(.to):not(.dlt) { display: flex; flex-direction: column; gap: 4px; }
+.shift b { font: 400 30px/1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.shift .to { width: 28px; height: 1px; background: var(--faint); margin-bottom: 14px; position: relative; }
+.shift .to::after { content: ""; position: absolute; right: 0; top: -3px; border: 3.5px solid transparent; border-left: 6px solid var(--faint); border-right: 0; }
+.shift .dlt { margin-bottom: 6px; font-size: 13px; color: var(--ink); }
 .lbl { font-size: 11.5px; color: var(--dim); }
 .sat { margin: 4px 0 16px; }
 .satbox { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #060708; }
@@ -314,7 +349,7 @@ body.touring .results, body.touring .detail, body.touring .tgt { padding-bottom:
   .app { display: block; overflow-y: auto; }
   .bar { height: var(--bar); padding-right: 16px; } .bar nav { gap: 14px; } #btnTour { display: none; }
   .dest .chg { display: none; }
-  .profile { grid-template-columns: 1fr; } .asp { max-width: none; }
+  .profile { grid-template-columns: 1fr; } .pbar { max-width: none; }
   .query { padding: 12px 16px; } .sentence { font-size: 19px; }
   .tgt { order: -2; display: grid; grid-template-columns: 104px minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 12px 16px; overflow: visible; border-bottom: 1px solid var(--line); }
   .tgt .kicker { grid-column: 1 / -1; } .tgtglobe { margin: 6px 0 0; } .tgt h2 { font-size: 18px; } .tgthint, .tgt .qnote { display: none; }
@@ -343,3 +378,26 @@ body.touring .results, body.touring .detail, body.touring .tgt { padding-bottom:
 #fineChart { width: 100%; height: 150px; display: block; margin: 12px 0 2px; }
 .traits.fine { margin-top: 12px; }
 .barx.wide { width: 120px; }
+
+/* radar: likeness per aspect. Rings at 25/50/75/100 %, the blue shape is this place; the dashed outer ring is "identical". */
+.radar { display: block; overflow: visible; }
+.radar .rg { fill: none; stroke: rgba(242,238,232,.13); stroke-width: 1; }
+.radar .rg.out { stroke: rgba(242,238,232,.38); stroke-dasharray: 3 3; }
+.radar .sp { stroke: rgba(242,238,232,.13); stroke-width: 1; }
+.radar .shape { fill: rgba(57,135,229,.38); stroke: var(--score); stroke-width: 1.5; stroke-linejoin: round; }
+.radar.big .shape { stroke-width: 2; }
+.radar .vx { fill: var(--score-lt); stroke: var(--bg); stroke-width: 2; }
+.radar .rl { fill: var(--faint); font: 400 10px var(--sans); }
+.radar .al { fill: var(--ink); font: 500 12.5px var(--sans); }
+.radar .av { fill: var(--dim); font: 400 11.5px var(--sans); font-variant-numeric: tabular-nums; }
+.radarbox { display: flex; justify-content: center; margin: 4px 0 8px; }
+.radarbox .radar { width: 100%; max-width: 380px; height: auto; }
+.item .sc .radar { margin: 8px 0 0 auto; }
+.listnote .barkey { display: flex; flex-direction: column; gap: 2px; }
+.rkey .radar { width: 270px; max-width: 100%; height: auto; margin: 0 auto; }
+.rkey .radar .al { font-size: 13px; } .rkey .radar .rl { display: none; }
+@media (max-width: 860px) { .listnote .barkey { flex-direction: column; align-items: flex-start; } }
+
+.pfkey i.ov { width: 14px; height: 8px; background: rgba(57,135,229,.45); }
+.pdfh { font-size: 13px; font-weight: 500; margin: 6px 0 4px; }
+#fineChart { width: 100%; height: 190px; display: block; }
