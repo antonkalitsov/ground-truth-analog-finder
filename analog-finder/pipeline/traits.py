@@ -67,19 +67,22 @@ MARS_SITE_ROCK = {
     "green-valley-phoenix": "loose", "arcadia-planitia": "loose", "ares-vallis-pathfinder": "loose", "deuteronilus-mensae": "ice",
 }
 
+# Precipitation and plant greenness overlap (rank correlation 0.80 over Earth's land, 0.58 between their similarity
+# scores for a Mars or Moon target), so in every preset their weights are 0.75 of what they would be: two traits that
+# carry about 1.5 traits' worth of independent information count as 1.5.
 PRESETS = {
-    "overall":     ("Overall analog",          "Every trait counts equally (air pressure excluded: no place on Earth comes close).",
-                    dict(slope=1, rough=1, relief=1, albedo=1, bare=1, icecover=1, temp=1, trange=1, sun=1, ice=1, dry=1, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=1, rock=0.25)),
+    "overall":     ("Overall analog",          "Every trait counts equally, except precipitation and plant greenness, which overlap and count as 1.5 traits together (air pressure excluded: no place on Earth comes close).",
+                    dict(slope=1, rough=1, relief=1, albedo=1, bare=1, icecover=1, temp=1, trange=1, sun=1, ice=1, dry=0.75, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.75, rock=0.25)),
     "landing":     ("Rover & landing tests",   "Terrain that drives, lands and navigates like the target: slope, roughness, relief, bare loose ground.",
-                    dict(slope=3, rough=3, relief=2, albedo=0.5, bare=1.5, icecover=0.5, temp=0.3, trange=0.3, sun=0.3, ice=0.3, dry=0.5, soil=0.5, dust=1, wind=0.3, pressure=0, ndvi=0.5, rock=0.5)),
+                    dict(slope=3, rough=3, relief=2, albedo=0.5, bare=1.5, icecover=0.5, temp=0.3, trange=0.3, sun=0.3, ice=0.3, dry=0.375, soil=0.5, dust=1, wind=0.3, pressure=0, ndvi=0.375, rock=0.5)),
     "polar":       ("Polar base operations",   "Low sun, long shadows, cold and ice nearby: lighting, power and thermal design for a south-pole base.",
-                    dict(slope=1, rough=0.5, relief=1.5, albedo=0.5, bare=1, icecover=1, temp=2, trange=1, sun=3, ice=1.5, dry=0.5, dust=0.3, wind=0.3, pressure=0, ndvi=0.3, rock=0.5)),
+                    dict(slope=1, rough=0.5, relief=1.5, albedo=0.5, bare=1, icecover=1, temp=2, trange=1, sun=3, ice=1.5, dry=0.375, dust=0.3, wind=0.3, pressure=0, ndvi=0.225, rock=0.5)),
     "isru":        ("Ice prospecting & ISRU",  "Frozen ground under dry, bare terrain: drilling, ground-penetrating radar and water extraction trials.",
-                    dict(slope=0.5, rough=0.5, relief=0.5, albedo=0.5, bare=1.5, icecover=1, temp=2, trange=0.5, sun=0.5, ice=3, dry=1.5, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.5, rock=1)),
+                    dict(slope=0.5, rough=0.5, relief=0.5, albedo=0.5, bare=1.5, icecover=1, temp=2, trange=0.5, sun=0.5, ice=3, dry=1.125, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.375, rock=1)),
     "instruments": ("Instrument & remote sensing", "Surfaces that look the same to cameras and spectrometers: albedo, bare ground, no vegetation, dry air.",
-                    dict(slope=0.5, rough=1, relief=1, albedo=3, bare=3, icecover=1, temp=0.3, trange=0.3, sun=0.5, ice=0.3, dry=1.5, soil=1.5, dust=1, wind=0.3, pressure=0, ndvi=1.5, rock=2)),
+                    dict(slope=0.5, rough=1, relief=1, albedo=3, bare=3, icecover=1, temp=0.3, trange=0.3, sun=0.5, ice=0.3, dry=1.125, soil=1.5, dust=1, wind=0.3, pressure=0, ndvi=1.125, rock=2)),
     "crew":        ("Crew & EVA training",     "Places where people can rehearse surface operations: walkable slopes, harsh cold and dry conditions, isolation.",
-                    dict(slope=2, rough=2, relief=1, albedo=0.5, bare=1.5, icecover=0.5, temp=1.5, trange=1, sun=1, ice=0.5, dry=1.5, soil=1, dust=0.5, wind=1, pressure=0, ndvi=0.5, rock=0.5)),
+                    dict(slope=2, rough=2, relief=1, albedo=0.5, bare=1.5, icecover=0.5, temp=1.5, trange=1, sun=1, ice=0.5, dry=1.125, soil=1, dust=0.5, wind=1, pressure=0, ndvi=0.375, rock=0.5)),
 }
 
 BODY = {
@@ -145,14 +148,27 @@ def moon_model(lat, elev, slope, rough, relief, ice_flag=None, rock=None, divine
                 temp=temp, trange=trange, sun=mean_noon_sun_elevation(lat, 1.54), ice=ice, dry=z, soil=z, dust=z, wind=z, pressure=z,
                 ndvi=z, rock=np.full_like(a, FAMILY.index("highland")) if rock is None else np.asarray(rock, np.float64))
 
+def blend_sim(e, tv, tol, lo, hi, quant):
+    """Similarity (0..1) of Earth values e to target tv, all in transformed units; see score() for the rule."""
+    e = np.asarray(e, np.float64)
+    close = np.clip(1 - np.abs(e - tv) / tol, 0, 1)
+    if lo <= tv <= hi:
+        return close
+    F = np.interp(e, quant, np.linspace(0, 1, 101))
+    extreme = np.clip(1 - 2 * (F if tv < lo else 1 - F), 0, 1)
+    b = min(1.0, (lo - tv if tv < lo else tv - hi) / tol)
+    return (1 - b) * close + b * extreme
+
 def score(earth_t, target_t, weights, earth_lo, earth_hi, quant):
     """earth_t: dict tid -> transformed arrays; target_t: dict tid -> transformed scalar; quant: tid -> 101 Earth percentiles.
-    In range: sim = 1 - |earth - target| / tolerance (clipped to 0..1).
-    Target beyond what Earth offers (outside Earth's 1st..99th percentile): sim = 1 - 2 * F, where F is the fraction of
-    Earth's land that is more extreme in the target's direction than this cell. Earth's most extreme places score 1 and
-    the median place 0, so the trait still ranks places toward the target (the UI flags it as 'beyond Earth')."""
+    Per trait, two measures (both clipped to 0..1):
+      closeness  C = 1 - |earth - target| / tolerance
+      extremity  X = 1 - 2 * F, F = fraction of Earth's land more extreme in the target's direction than this cell
+                 (Earth's most extreme places score 1, the median place 0)
+    sim = (1 - b) * C + b * X, with b = (distance of the target beyond Earth's 1st..99th percentile range) / tolerance,
+    capped at 1. Inside Earth's range b = 0 (pure closeness); one tolerance or more beyond it b = 1 (pure extremity, the
+    UI flags the trait as 'beyond Earth'). In between the two blend, so nearby targets always get nearby scores."""
     num = 0; den = 0; sims = {}
-    pc = np.linspace(0, 1, 101)
     for t in TRAITS:
         tid, tol = t[0], t[7]
         w = weights.get(tid, 0)
@@ -160,11 +176,7 @@ def score(earth_t, target_t, weights, earth_lo, earth_hi, quant):
         tv = target_t[tid]; e = earth_t[tid]
         if t[4] == "cat":
             s = ROCK_MATRIX[int(tv)][np.clip(np.asarray(e).astype(int), 0, len(GLIM) - 1)]
-        elif tv < earth_lo[tid]:
-            F = np.interp(e, quant[tid], pc); s = np.clip(1 - 2 * F, 0, 1)
-        elif tv > earth_hi[tid]:
-            F = 1 - np.interp(e, quant[tid], pc); s = np.clip(1 - 2 * F, 0, 1)
         else:
-            s = np.clip(1 - np.abs(e - tv) / tol, 0, 1)
+            s = blend_sim(e, tv, tol, earth_lo[tid], earth_hi[tid], quant[tid])
         sims[tid] = s; num = num + w * s; den += w
     return 100 * num / den, sims

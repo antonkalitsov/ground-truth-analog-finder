@@ -78,8 +78,8 @@ Approximations to keep in mind:
 | Atmosphere | dust (aerosol optical depth), wind, pressure | CERES SYN1deg AOD, MERRA-2 wind, elevation | typical Mars values; Moon none |
 
 * **Same ruler on three worlds.** Terrain statistics use the same definitions everywhere: elevation averaged to about 1.85 km pixels; slope by central differences; roughness = RMS of elevation minus its 5 × 5 neighbourhood mean; relief = 95th minus 5th percentile, all inside a 15 × 15 pixel (about 28 km) window.
-* **Similarity per trait** = 1 − |Earth − target| / tolerance. When the target lies beyond anything on Earth (a 1° noon sun, −100 °C), the trait ranks places toward Earth's own extreme instead (1 for Earth's most extreme land, 0 for the median), and the card labels it "Earth limit".
-* **Score** = weighted mean of trait similarities × 100. Mission presets weight traits for what the analog is for, following the *functional analogue* idea of Foucher et al. (2021).
+* **Similarity per trait** = 1 − |Earth − target| / tolerance. When the target lies beyond anything on Earth (a 1° noon sun, −100 °C), the trait ranks places toward Earth's own extreme instead (1 for Earth's most extreme land, 0 for the median), and the card labels it "Earth limit". The two blend smoothly: past the edge of Earth's range (1st to 99th percentile) the extreme-ranking share grows from 0 to 100 % over one tolerance, so nearby targets always get nearby scores.
+* **Score** = weighted mean of trait similarities × 100. Mission presets weight traits for what the analog is for, following the *functional analogue* idea of Foucher et al. (2021). Precipitation and plant greenness overlap (rank correlation 0.80 across Earth's land), so in every purpose their weights are cut to 0.75 of the rest: together they count as 1.5 traits, not 2. Soil moisture is not part of this: on Earth it follows cold and ground ice more than rainfall.
 * **Never reproducible** factors (gravity, vacuum or thin CO₂ air, surface radiation) are listed on every card.
 
 ## The challenge's considerations

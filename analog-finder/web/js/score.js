@@ -1,7 +1,9 @@
 // score.js — data loading and the scoring engine for Ground Truth.
-// Same rule as pipeline/traits.py:
-//   target inside Earth's range:  sim = 1 - |earth - target| / tolerance        (clipped 0..1)
-//   target beyond Earth's range:  sim = 1 - 2F, F = share of Earth's land more extreme toward the target
+// Same rule as pipeline/traits.py (blend_sim), per trait:
+//   closeness  C = 1 - |earth - target| / tolerance                                       (clipped 0..1)
+//   extremity  X = 1 - 2F, F = share of Earth's land more extreme toward the target       (clipped 0..1)
+//   sim = (1 - b) C + b X, b = how far the target lies beyond Earth's 1st..99th percentile range, in tolerances (max 1)
+// Inside Earth's range b = 0; a tolerance or more beyond it b = 1; in between the two blend, so scores never jump.
 // Every Earth trait is a byte per land cell, so each trait's similarity is a 256-entry lookup table
 // and a full global re-score (318k cells x 15 traits) takes a few milliseconds.
 
@@ -45,9 +47,13 @@ const PCT = Array.from({ length: 101 }, (_, i) => i / 100);
 // similarity of an Earth value (transformed units) to a target (transformed units)
 export function similarity(tr, e, tv) {
   if (tr.transform === 'cat') { const row = tr.matrix && tr.matrix[Math.round(tv)]; return row ? (row[Math.round(e)] ?? 0) : 0; }
-  if (tv < tr.earthLo) return Math.max(0, 1 - 2 * interp(e, tr.quant, PCT));
-  if (tv > tr.earthHi) return Math.max(0, 1 - 2 * (1 - interp(e, tr.quant, PCT)));
-  return Math.max(0, 1 - Math.abs(e - tv) / tr.tol);
+  const close = Math.max(0, 1 - Math.abs(e - tv) / tr.tol);
+  const out = tv < tr.earthLo ? tr.earthLo - tv : tv > tr.earthHi ? tv - tr.earthHi : 0;
+  if (out <= 0) return close;
+  const F = interp(e, tr.quant, PCT);
+  const extreme = Math.max(0, 1 - 2 * (tv < tr.earthLo ? F : 1 - F));
+  const b = Math.min(1, out / tr.tol);
+  return (1 - b) * close + b * extreme;
 }
 export const beyondEarth = (tr, tv) => tv < tr.earthLo || tv > tr.earthHi;
 
