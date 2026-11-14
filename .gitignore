@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+
+# Large NASA rasters and downloads (re-fetch with download_data.ps1 / fetch_official.py)
+data/raw/
+raw/
+data/official/*.npz
+data/official/*.zip
+*.zip
+
+# Caches
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db

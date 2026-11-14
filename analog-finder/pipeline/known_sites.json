@@ -1,0 +1,1522 @@
+[
+  {
+    "name": "Yungay, Atacama Desert",
+    "lat": -24.1,
+    "lon": -70.02,
+    "country": "Chile",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "astrobiology",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Hyperarid core of the Atacama; Mars-like oxidising soils used for rover and life-detection tests",
+    "source": "https://en.wikipedia.org/wiki/Yungay,_Chile"
+  },
+  {
+    "name": "Haughton impact crater, Devon Island",
+    "lat": 75.38,
+    "lon": -89.68,
+    "country": "Canada",
+    "body": "both",
+    "types": [
+      "planetary",
+      "process",
+      "astrobiology",
+      "engineering",
+      "human-ops"
+    ],
+    "used_by": "NASA, Mars Institute, CSA",
+    "note": "Polar desert impact crater; Haughton-Mars Project and FMARS field operations",
+    "source": "https://en.wikipedia.org/wiki/Haughton_impact_crater"
+  },
+  {
+    "name": "Badwater Basin, Death Valley",
+    "lat": 36.23,
+    "lon": -116.77,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process",
+      "astrobiology",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Salt pan and playas; evaporite and rover test analog for Martian basins",
+    "source": "https://en.wikipedia.org/wiki/Badwater_Basin"
+  },
+  {
+    "name": "Mars Desert Research Station, Hanksville",
+    "lat": 38.406,
+    "lon": -110.792,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process",
+      "human-ops",
+      "engineering"
+    ],
+    "used_by": "Mars Society",
+    "note": "Jurassic red sedimentary badlands around the MDRS habitat; crewed Mars simulation",
+    "source": "https://en.wikipedia.org/wiki/Mars_Desert_Research_Station"
+  },
+  {
+    "name": "Wright Valley, McMurdo Dry Valleys",
+    "lat": -77.52,
+    "lon": 161.85,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Cold hyperarid ice-free valley; closest terrestrial climate analog to Mars",
+    "source": "https://en.wikipedia.org/wiki/Wright_Valley"
+  },
+  {
+    "name": "Rio Tinto",
+    "lat": 37.69,
+    "lon": -6.59,
+    "country": "Spain",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "NASA, CAB, ESA",
+    "note": "Acidic iron and sulfate-rich river; Meridiani-like chemistry and acidophile life (MARTE drilling)",
+    "source": "https://en.wikipedia.org/wiki/Rio_Tinto_(river)"
+  },
+  {
+    "name": "Timanfaya, Lanzarote",
+    "lat": 29.0,
+    "lon": -13.75,
+    "country": "Spain",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology",
+      "human-ops"
+    ],
+    "used_by": "ESA",
+    "note": "Basaltic lava fields and tubes; ESA PANGAEA astronaut geology training",
+    "source": "https://en.wikipedia.org/wiki/Timanfaya_National_Park"
+  },
+  {
+    "name": "Mauna Kea",
+    "lat": 19.82,
+    "lon": -155.47,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology",
+      "engineering"
+    ],
+    "used_by": "NASA, PISCES, CSA",
+    "note": "Volcanic tephra slopes used for lunar ISRU and rover field tests (PISCES)",
+    "source": "https://en.wikipedia.org/wiki/Mauna_Kea"
+  },
+  {
+    "name": "Wadi Rum",
+    "lat": 29.57,
+    "lon": 35.42,
+    "country": "Jordan",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "human-ops"
+    ],
+    "used_by": "Austrian Space Forum, academic",
+    "note": "Red sandstone desert; AMADEE-24 and other Mars field simulations",
+    "source": "https://en.wikipedia.org/wiki/Wadi_Rum"
+  },
+  {
+    "name": "Bockfjorden volcanic complex, Svalbard",
+    "lat": 79.43,
+    "lon": 13.32,
+    "country": "Norway",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "petrology",
+      "astrobiology",
+      "engineering"
+    ],
+    "used_by": "NASA, ESA (AMASE)",
+    "note": "Sverrefjellet volcano with carbonates like ALH84001; AMASE instrument tests",
+    "source": "https://en.wikipedia.org/wiki/Sverrefjellet"
+  },
+  {
+    "name": "Dresser Formation, North Pole Dome, Pilbara",
+    "lat": -21.15,
+    "lon": 119.42,
+    "country": "Australia",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "3.48 Ga stromatolites and hot-spring deposits; early biosignature analog",
+    "source": "https://en.wikipedia.org/wiki/Dresser_Formation"
+  },
+  {
+    "name": "Holuhraun lava field",
+    "lat": 64.87,
+    "lon": -16.83,
+    "country": "Iceland",
+    "body": "both",
+    "types": [
+      "planetary",
+      "process",
+      "petrology",
+      "engineering"
+    ],
+    "used_by": "NASA, ESA, academic",
+    "note": "2014-15 basaltic flood lava; fresh lava and sand analog for Mars and Moon",
+    "source": "https://en.wikipedia.org/wiki/Holuhraun"
+  },
+  {
+    "name": "Meteor Crater (Barringer)",
+    "lat": 35.027,
+    "lon": -111.022,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "process",
+      "human-ops"
+    ],
+    "used_by": "NASA",
+    "note": "Simple impact crater used for Apollo astronaut geology training",
+    "source": "https://en.wikipedia.org/wiki/Meteor_Crater"
+  },
+  {
+    "name": "Black Point Lava Flow",
+    "lat": 35.68,
+    "lon": -111.42,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "engineering",
+      "human-ops"
+    ],
+    "used_by": "NASA (Desert RATS)",
+    "note": "Basalt flow in San Francisco volcanic field; Desert RATS rover and EVA tests",
+    "source": "https://en.wikipedia.org/wiki/Desert_Research_and_Technology_Studies"
+  },
+  {
+    "name": "Craters of the Moon",
+    "lat": 43.42,
+    "lon": -113.52,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology",
+      "human-ops"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Basaltic lava fields used by Apollo crews and NASA FINESSE lunar studies",
+    "source": "https://en.wikipedia.org/wiki/Craters_of_the_Moon_National_Monument_and_Preserve"
+  },
+  {
+    "name": "Nordlinger Ries crater",
+    "lat": 48.88,
+    "lon": 10.56,
+    "country": "Germany",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "process",
+      "petrology"
+    ],
+    "used_by": "NASA, ESA",
+    "note": "24 km impact crater with suevite; Apollo 14 and 17 crew training",
+    "source": "https://en.wikipedia.org/wiki/N%C3%B6rdlinger_Ries"
+  },
+  {
+    "name": "HI-SEAS, Mauna Loa",
+    "lat": 19.6,
+    "lon": -155.49,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "human-ops",
+      "planetary"
+    ],
+    "used_by": "NASA, IMA",
+    "note": "Barren basaltic slope of Mauna Loa hosting long-duration Mars habitat missions",
+    "source": "https://en.wikipedia.org/wiki/HI-SEAS"
+  },
+  {
+    "name": "Gypsum Hill springs, Axel Heiberg Island",
+    "lat": 79.41,
+    "lon": -90.73,
+    "country": "Canada",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "academic (McGill), NASA",
+    "note": "Perennial cold saline springs through permafrost; subsurface brine analog",
+    "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island"
+  },
+  {
+    "name": "Lonar crater",
+    "lat": 19.98,
+    "lon": 76.51,
+    "country": "India",
+    "body": "both",
+    "types": [
+      "planetary",
+      "process",
+      "petrology",
+      "astrobiology"
+    ],
+    "used_by": "ISRO, academic",
+    "note": "Impact crater in Deccan basalt; analog for craters on basaltic planetary crust",
+    "source": "https://en.wikipedia.org/wiki/Lonar_Lake"
+  },
+  {
+    "name": "Dallol, Danakil Depression",
+    "lat": 14.24,
+    "lon": 40.3,
+    "country": "Ethiopia",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "Europlanet, academic",
+    "note": "Hyper-acid hypersaline hot springs; limits of habitability for Mars brines",
+    "source": "https://en.wikipedia.org/wiki/Dallol_(hydrothermal_system)"
+  },
+  {
+    "name": "Dome C (Concordia Station)",
+    "lat": -75.1,
+    "lon": 123.35,
+    "country": "Antarctica",
+    "body": "both",
+    "types": [
+      "human-ops"
+    ],
+    "used_by": "ESA, IPEV, PNRA",
+    "note": "Isolated high polar plateau base; ESA isolation and confinement analog",
+    "source": "https://en.wikipedia.org/wiki/Concordia_Station"
+  },
+  {
+    "name": "Mount Etna",
+    "lat": 37.75,
+    "lon": 14.99,
+    "country": "Italy",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology",
+      "engineering"
+    ],
+    "used_by": "ESA, DLR",
+    "note": "Fresh volcanic terrain and lava tubes; ARCHES and ROBEX rover campaigns",
+    "source": "https://en.wikipedia.org/wiki/Mount_Etna"
+  },
+  {
+    "name": "Lake Salda",
+    "lat": 37.55,
+    "lon": 29.68,
+    "country": "Turkey",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Hydromagnesite microbialites and sediments like the Jezero crater carbonates",
+    "source": "https://en.wikipedia.org/wiki/Lake_Salda"
+  },
+  {
+    "name": "Lava Beds / Medicine Lake Volcano",
+    "lat": 41.71,
+    "lon": -121.51,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "engineering",
+      "astrobiology"
+    ],
+    "used_by": "NASA (BRAILLE)",
+    "note": "Lava tube caves used to test cave robotics and microbial mat detection",
+    "source": "https://en.wikipedia.org/wiki/Lava_Beds_National_Monument"
+  },
+  {
+    "name": "Pilot Valley playa",
+    "lat": 41.0,
+    "lon": -114.08,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Groundwater-fed playa with perchlorate and evaporites; Mars northern plains analog",
+    "source": "https://en.wikipedia.org/wiki/Pilot_Range"
+  },
+  {
+    "name": "Askja",
+    "lat": 65.03,
+    "lon": -16.75,
+    "country": "Iceland",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology",
+      "human-ops"
+    ],
+    "used_by": "NASA, ESA",
+    "note": "Pumice and lava fields; Apollo crew training and Artemis-era geology field tests",
+    "source": "https://en.wikipedia.org/wiki/Askja"
+  },
+  {
+    "name": "Verde Valley",
+    "lat": 34.6,
+    "lon": -111.9,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Lacustrine Verde Formation mudstones; biosignature preservation analog for Gale",
+    "source": "https://en.wikipedia.org/wiki/Verde_Valley"
+  },
+  {
+    "name": "Kilauea",
+    "lat": 19.41,
+    "lon": -155.28,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology",
+      "human-ops"
+    ],
+    "used_by": "NASA (RISE2, SSERVI)",
+    "note": "Active basaltic shield; lava channels compared with Hadley Rille",
+    "source": "https://en.wikipedia.org/wiki/K%C4%ABlauea"
+  },
+  {
+    "name": "Sudbury impact structure",
+    "lat": 46.6,
+    "lon": -81.18,
+    "country": "Canada",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA, CSA",
+    "note": "Large eroded impact basin with impact melt; Apollo 17 crew geology training",
+    "source": "https://en.wikipedia.org/wiki/Sudbury_Basin"
+  },
+  {
+    "name": "Teide National Park, Tenerife",
+    "lat": 28.27,
+    "lon": -16.64,
+    "country": "Spain",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology",
+      "engineering"
+    ],
+    "used_by": "ESA, academic",
+    "note": "Basaltic and phonolitic volcanic terrain; Raman and ExoMars instrument field tests",
+    "source": "https://en.wikipedia.org/wiki/Teide_National_Park"
+  },
+  {
+    "name": "Piton de la Fournaise",
+    "lat": -21.24,
+    "lon": 55.71,
+    "country": "France (Reunion)",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "academic, CNES",
+    "note": "Active basaltic shield volcano; Martian volcanism and lava flow analog",
+    "source": "https://en.wikipedia.org/wiki/Piton_de_la_Fournaise"
+  },
+  {
+    "name": "Tablelands, Gros Morne",
+    "lat": 49.47,
+    "lon": -57.96,
+    "country": "Canada",
+    "body": "mars",
+    "types": [
+      "petrology",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Exposed mantle peridotite with serpentinisation; Mars methane and habitability analog",
+    "source": "https://en.wikipedia.org/wiki/Tablelands_(Newfoundland)"
+  },
+  {
+    "name": "Laguna de Tirez",
+    "lat": 39.54,
+    "lon": -3.36,
+    "country": "Spain",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "CAB, academic",
+    "note": "Hypersaline sulfate-rich lagoon; Martian sulfate brine analog",
+    "source": "https://en.wikipedia.org/wiki/Laguna_de_Tirez"
+  },
+  {
+    "name": "Mono Lake",
+    "lat": 38.0,
+    "lon": -119.02,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Alkaline saline lake with tufa carbonates; analog for Martian paleolakes",
+    "source": "https://en.wikipedia.org/wiki/Mono_Lake"
+  },
+  {
+    "name": "University Valley",
+    "lat": -77.86,
+    "lon": 160.73,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "High dry valley with ice-cemented permafrost like the Phoenix landing site",
+    "source": "https://en.wikipedia.org/wiki/McMurdo_Dry_Valleys"
+  },
+  {
+    "name": "Beacon Valley",
+    "lat": -77.82,
+    "lon": 160.65,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "process",
+      "planetary"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Buried ancient glacial ice and polygons; Mars ground ice analog",
+    "source": "https://en.wikipedia.org/wiki/Beacon_Valley"
+  },
+  {
+    "name": "Taylor Valley",
+    "lat": -77.63,
+    "lon": 163.0,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, NSF LTER",
+    "note": "Ice-covered lakes, Blood Falls brine and cold-based glaciers",
+    "source": "https://en.wikipedia.org/wiki/Taylor_Valley"
+  },
+  {
+    "name": "Don Juan Pond",
+    "lat": -77.563,
+    "lon": 161.19,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Calcium chloride brine pond that stays liquid near -50 C; Martian brine analog",
+    "source": "https://en.wikipedia.org/wiki/Don_Juan_Pond"
+  },
+  {
+    "name": "Mount Erebus",
+    "lat": -77.53,
+    "lon": 167.15,
+    "country": "Antarctica",
+    "body": "both",
+    "types": [
+      "engineering",
+      "astrobiology",
+      "planetary"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Ice caves and fumaroles on an active volcano; robot tests (Dante) and cave life",
+    "source": "https://en.wikipedia.org/wiki/Mount_Erebus"
+  },
+  {
+    "name": "Lake Vostok",
+    "lat": -77.5,
+    "lon": 106.0,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Subglacial lake under 4 km of ice; analog for ice-covered subsurface water",
+    "source": "https://en.wikipedia.org/wiki/Lake_Vostok"
+  },
+  {
+    "name": "Lake Untersee",
+    "lat": -71.34,
+    "lon": 13.45,
+    "country": "Antarctica",
+    "body": "mars",
+    "types": [
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Perennially ice-covered lake with conical stromatolites",
+    "source": "https://en.wikipedia.org/wiki/Lake_Untersee"
+  },
+  {
+    "name": "Lakagigar (Laki)",
+    "lat": 64.07,
+    "lon": -18.23,
+    "country": "Iceland",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Fissure eruption cones and flood lava; analog for Martian fissure volcanism",
+    "source": "https://en.wikipedia.org/wiki/Laki"
+  },
+  {
+    "name": "Krafla",
+    "lat": 65.72,
+    "lon": -16.75,
+    "country": "Iceland",
+    "body": "mars",
+    "types": [
+      "petrology",
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Hydrothermal alteration and acid-sulfate fumaroles at a rifting volcano",
+    "source": "https://en.wikipedia.org/wiki/Krafla"
+  },
+  {
+    "name": "Hverfjall",
+    "lat": 65.605,
+    "lon": -16.873,
+    "country": "Iceland",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA, ESA",
+    "note": "Tephra ring crater by Lake Myvatn; Apollo crew geology training",
+    "source": "https://en.wikipedia.org/wiki/Hverfjall"
+  },
+  {
+    "name": "Kverkfjoll",
+    "lat": 64.67,
+    "lon": -16.68,
+    "country": "Iceland",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Subglacial geothermal area; ice-volcano interaction and cave habitats",
+    "source": "https://en.wikipedia.org/wiki/Kverkfj%C3%B6ll"
+  },
+  {
+    "name": "Sandvatn (SAND-E site), Langjokull",
+    "lat": 64.48,
+    "lon": -20.0,
+    "country": "Iceland",
+    "body": "mars",
+    "types": [
+      "process",
+      "engineering"
+    ],
+    "used_by": "NASA (SAND-E), academic",
+    "note": "Glacio-fluvial basaltic sand plain used for Mars rover science operations",
+    "source": "https://en.wikipedia.org/wiki/Langj%C3%B6kull"
+  },
+  {
+    "name": "Mauna Ulu",
+    "lat": 19.36,
+    "lon": -155.2,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA",
+    "note": "Fresh pahoehoe lava shield; volcanic rift and lava tube analog",
+    "source": "https://en.wikipedia.org/wiki/Mauna_Ulu"
+  },
+  {
+    "name": "Ka'u Desert",
+    "lat": 19.35,
+    "lon": -155.35,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "process",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Acid fog altered basaltic tephra producing Mars-like sulfates and opaline silica",
+    "source": "https://en.wikipedia.org/wiki/Ka%CA%BB%C5%AB_Desert"
+  },
+  {
+    "name": "Haleakala",
+    "lat": 20.71,
+    "lon": -156.25,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Summit crater with cinder cones and sparse vegetation; Mars rover tests",
+    "source": "https://en.wikipedia.org/wiki/Haleakal%C4%81"
+  },
+  {
+    "name": "Salar de Atacama",
+    "lat": -23.5,
+    "lon": -68.25,
+    "country": "Chile",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Large evaporite basin; chloride and sulfate deposits like Martian salt plains",
+    "source": "https://en.wikipedia.org/wiki/Salar_de_Atacama"
+  },
+  {
+    "name": "Maria Elena South, Atacama",
+    "lat": -22.28,
+    "lon": -69.65,
+    "country": "Chile",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "One of the driest places on Earth; Mars-like soil humidity regime",
+    "source": "https://en.wikipedia.org/wiki/Mar%C3%ADa_Elena,_Chile"
+  },
+  {
+    "name": "Salar Grande",
+    "lat": -20.95,
+    "lon": -70.0,
+    "country": "Chile",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Halite crust where cyanobacteria live inside salt; Martian chloride analog",
+    "source": "https://en.wikipedia.org/wiki/Atacama_Desert"
+  },
+  {
+    "name": "El Tatio",
+    "lat": -22.33,
+    "lon": -68.01,
+    "country": "Chile",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "High-altitude geysers with silica sinter like Spirit's Home Plate",
+    "source": "https://en.wikipedia.org/wiki/El_Tatio"
+  },
+  {
+    "name": "Licancabur",
+    "lat": -22.83,
+    "lon": -67.88,
+    "country": "Chile/Bolivia",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "NASA, SETI Institute",
+    "note": "Summit crater lake at 5900 m with high UV; early Mars lake analog",
+    "source": "https://en.wikipedia.org/wiki/Licancabur"
+  },
+  {
+    "name": "Salar de Pocitos",
+    "lat": -24.4,
+    "lon": -67.0,
+    "country": "Argentina",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "High Puna salt flat with extreme UV and evaporites",
+    "source": "https://en.wikipedia.org/wiki/Salar_de_Pocitos"
+  },
+  {
+    "name": "Laguna Negra, Puna",
+    "lat": -27.65,
+    "lon": -68.55,
+    "country": "Argentina",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "High-altitude hypersaline lagoon with microbialites",
+    "source": "https://en.wikipedia.org/wiki/Puna_de_Atacama"
+  },
+  {
+    "name": "Laguna Diamante",
+    "lat": -34.17,
+    "lon": -69.67,
+    "country": "Argentina",
+    "body": "mars",
+    "types": [
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Arsenic-rich high-altitude lake in Maipo caldera; extremophile analog",
+    "source": "https://en.wikipedia.org/wiki/Laguna_del_Diamante_(Mendoza)"
+  },
+  {
+    "name": "Pampas de La Joya",
+    "lat": -16.75,
+    "lon": -71.9,
+    "country": "Peru",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Hyperarid coastal desert with nitrate and sulfate soils",
+    "source": "https://en.wikipedia.org/wiki/La_Joya_District"
+  },
+  {
+    "name": "Bonneville Salt Flats",
+    "lat": 40.76,
+    "lon": -113.89,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Halite crust on a pluvial lake floor; Mars chloride deposit analog",
+    "source": "https://en.wikipedia.org/wiki/Bonneville_Salt_Flats"
+  },
+  {
+    "name": "Goblin Valley",
+    "lat": 38.57,
+    "lon": -110.71,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Entrada sandstone hoodoos and concretions; Mars rover test terrain",
+    "source": "https://en.wikipedia.org/wiki/Goblin_Valley_State_Park"
+  },
+  {
+    "name": "SP Crater",
+    "lat": 35.581,
+    "lon": -111.632,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "engineering",
+      "human-ops"
+    ],
+    "used_by": "NASA",
+    "note": "Cinder cone with lava flow; Apollo training and Desert RATS traverses",
+    "source": "https://en.wikipedia.org/wiki/SP_Crater"
+  },
+  {
+    "name": "Cinder Lake crater field",
+    "lat": 35.3,
+    "lon": -111.475,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "human-ops",
+      "engineering"
+    ],
+    "used_by": "NASA, USGS",
+    "note": "Artificial crater field blasted in cinders to train Apollo crews",
+    "source": "https://en.wikipedia.org/wiki/Cinder_Lake_Crater_Field"
+  },
+  {
+    "name": "Kilbourne Hole",
+    "lat": 31.98,
+    "lon": -106.97,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA",
+    "note": "Maar crater with mantle xenoliths; Apollo astronaut field training",
+    "source": "https://en.wikipedia.org/wiki/Kilbourne_Hole"
+  },
+  {
+    "name": "White Sands",
+    "lat": 32.78,
+    "lon": -106.17,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "process"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Gypsum dune field; analog for Martian polar sulfate dunes",
+    "source": "https://en.wikipedia.org/wiki/White_Sands_National_Park"
+  },
+  {
+    "name": "El Malpais",
+    "lat": 34.88,
+    "lon": -107.98,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Lava flows and tubes in the Zuni-Bandera field; planetary cave analog",
+    "source": "https://en.wikipedia.org/wiki/El_Malpais_National_Monument"
+  },
+  {
+    "name": "Bandera crater, Zuni-Bandera field",
+    "lat": 34.99,
+    "lon": -108.09,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA",
+    "note": "Cinder cone with lava tube collapse; lunar sinuous rille analog",
+    "source": "https://en.wikipedia.org/wiki/Zuni-Bandera_volcanic_field"
+  },
+  {
+    "name": "Dumont Dunes, Mojave Desert",
+    "lat": 35.68,
+    "lon": -116.22,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "engineering",
+      "process"
+    ],
+    "used_by": "NASA JPL",
+    "note": "Sand dunes used to test Mars rover mobility",
+    "source": "https://en.wikipedia.org/wiki/Dumont_Dunes"
+  },
+  {
+    "name": "Pisgah crater and lava field",
+    "lat": 34.745,
+    "lon": -116.375,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Young basaltic cinder cone and flow; radar and rover test analog",
+    "source": "https://en.wikipedia.org/wiki/Pisgah_Crater"
+  },
+  {
+    "name": "Amboy crater",
+    "lat": 34.544,
+    "lon": -115.79,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Cinder cone and lava field; analog for small Martian volcanoes",
+    "source": "https://en.wikipedia.org/wiki/Amboy_Crater"
+  },
+  {
+    "name": "Lunar Crater volcanic field",
+    "lat": 38.38,
+    "lon": -116.07,
+    "country": "United States",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "human-ops"
+    ],
+    "used_by": "NASA",
+    "note": "Basaltic cones and maars in Nevada; Apollo-era training site",
+    "source": "https://en.wikipedia.org/wiki/Lunar_Crater_volcanic_field"
+  },
+  {
+    "name": "Valley of Ten Thousand Smokes",
+    "lat": 58.33,
+    "lon": -155.25,
+    "country": "United States",
+    "body": "both",
+    "types": [
+      "planetary",
+      "process"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Thick ignimbrite from 1912 Novarupta eruption; Apollo training and Mars ash analog",
+    "source": "https://en.wikipedia.org/wiki/Valley_of_Ten_Thousand_Smokes"
+  },
+  {
+    "name": "Gulkana Glacier",
+    "lat": 63.27,
+    "lon": -145.42,
+    "country": "United States",
+    "body": "mars",
+    "types": [
+      "process",
+      "engineering"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Debris-covered glacier site for ground-penetrating radar of buried ice",
+    "source": "https://en.wikipedia.org/wiki/Gulkana_Glacier"
+  },
+  {
+    "name": "Lost Hammer spring, Axel Heiberg Island",
+    "lat": 79.07,
+    "lon": -90.35,
+    "country": "Canada",
+    "body": "mars",
+    "types": [
+      "astrobiology"
+    ],
+    "used_by": "academic (McGill), CSA",
+    "note": "Hypersaline methane-rich cold spring in permafrost",
+    "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island"
+  },
+  {
+    "name": "Pavilion Lake",
+    "lat": 50.86,
+    "lon": -121.74,
+    "country": "Canada",
+    "body": "both",
+    "types": [
+      "astrobiology",
+      "human-ops"
+    ],
+    "used_by": "NASA, CSA",
+    "note": "Freshwater microbialites explored with subs as a human EVA analog",
+    "source": "https://en.wikipedia.org/wiki/Pavilion_Lake"
+  },
+  {
+    "name": "Mistastin Lake crater",
+    "lat": 55.88,
+    "lon": -63.3,
+    "country": "Canada",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "CSA, NASA",
+    "note": "Impact crater with anorthosite target like the lunar highlands",
+    "source": "https://en.wikipedia.org/wiki/Lake_Mistastin"
+  },
+  {
+    "name": "Manicouagan crater",
+    "lat": 51.38,
+    "lon": -68.7,
+    "country": "Canada",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "academic, CSA",
+    "note": "Large complex crater with impact melt sheet",
+    "source": "https://en.wikipedia.org/wiki/Manicouagan_Reservoir"
+  },
+  {
+    "name": "Adventdalen, Longyearbyen",
+    "lat": 78.2,
+    "lon": 15.8,
+    "country": "Norway",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic, ESA",
+    "note": "Permafrost valley with pingos and ice wedges; periglacial analog",
+    "source": "https://en.wikipedia.org/wiki/Adventdalen"
+  },
+  {
+    "name": "Bardenas Reales",
+    "lat": 42.2,
+    "lon": -1.5,
+    "country": "Spain",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Badlands of clay and gypsum; sedimentary Mars terrain analog",
+    "source": "https://en.wikipedia.org/wiki/Bardenas_Reales"
+  },
+  {
+    "name": "Jaroso Ravine, Sierra Almagrera",
+    "lat": 37.31,
+    "lon": -1.87,
+    "country": "Spain",
+    "body": "mars",
+    "types": [
+      "petrology",
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Type locality of jarosite; Meridiani mineral analog",
+    "source": "https://en.wikipedia.org/wiki/Jarosite"
+  },
+  {
+    "name": "Vulcano",
+    "lat": 38.4,
+    "lon": 14.96,
+    "country": "Italy",
+    "body": "mars",
+    "types": [
+      "petrology",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Fumarolic acid-sulfate alteration; hydrothermal Mars analog",
+    "source": "https://en.wikipedia.org/wiki/Vulcano"
+  },
+  {
+    "name": "Bletterbach gorge",
+    "lat": 46.36,
+    "lon": 11.43,
+    "country": "Italy",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "human-ops"
+    ],
+    "used_by": "ESA (PANGAEA)",
+    "note": "Permian-Triassic sedimentary canyon used for ESA astronaut geology training",
+    "source": "https://en.wikipedia.org/wiki/Bletterbach"
+  },
+  {
+    "name": "Boulby Mine",
+    "lat": 54.55,
+    "lon": -0.83,
+    "country": "United Kingdom",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "engineering"
+    ],
+    "used_by": "academic, NASA (MINAR)",
+    "note": "Deep Permian evaporite mine; subsurface brine and instrument tests",
+    "source": "https://en.wikipedia.org/wiki/Boulby_Mine"
+  },
+  {
+    "name": "Isle of Rum",
+    "lat": 57.0,
+    "lon": -6.33,
+    "country": "United Kingdom",
+    "body": "both",
+    "types": [
+      "petrology"
+    ],
+    "used_by": "academic",
+    "note": "Layered ultramafic intrusion; analog for Mars and Moon igneous rocks",
+    "source": "https://en.wikipedia.org/wiki/Rùm"
+  },
+  {
+    "name": "Rochechouart impact structure",
+    "lat": 45.82,
+    "lon": 0.78,
+    "country": "France",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "academic",
+    "note": "Eroded impact structure with impact melt and breccias",
+    "source": "https://en.wikipedia.org/wiki/Rochechouart_impact_structure"
+  },
+  {
+    "name": "Erfoud and Merzouga (Ibn Battuta Centre)",
+    "lat": 31.43,
+    "lon": -4.23,
+    "country": "Morocco",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process",
+      "engineering"
+    ],
+    "used_by": "ESA, academic",
+    "note": "Desert with dunes, hamadas and fossil rivers; rover tests (ExoMars)",
+    "source": "https://en.wikipedia.org/wiki/Erfoud"
+  },
+  {
+    "name": "Chott el Jerid",
+    "lat": 33.7,
+    "lon": 8.4,
+    "country": "Tunisia",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Large salt flat; analog for Martian evaporitic basins",
+    "source": "https://en.wikipedia.org/wiki/Chott_el_Djerid"
+  },
+  {
+    "name": "Gilf Kebir, Western Desert",
+    "lat": 23.5,
+    "lon": 25.9,
+    "country": "Egypt",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "process"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Sandstone plateau with radar-revealed buried river channels",
+    "source": "https://en.wikipedia.org/wiki/Gilf_Kebir"
+  },
+  {
+    "name": "Makhtesh Ramon (D-MARS)",
+    "lat": 30.58,
+    "lon": 34.85,
+    "country": "Israel",
+    "body": "mars",
+    "types": [
+      "human-ops",
+      "planetary"
+    ],
+    "used_by": "D-MARS, Israel Space Agency",
+    "note": "Erosion cirque in the Negev hosting D-MARS habitat simulations",
+    "source": "https://en.wikipedia.org/wiki/Makhtesh_Ramon"
+  },
+  {
+    "name": "Dhofar desert (AMADEE-18)",
+    "lat": 18.9,
+    "lon": 54.4,
+    "country": "Oman",
+    "body": "mars",
+    "types": [
+      "human-ops",
+      "planetary",
+      "engineering"
+    ],
+    "used_by": "Austrian Space Forum",
+    "note": "Hyperarid desert near Marmul; site of AMADEE-18 Mars simulation",
+    "source": "https://en.wikipedia.org/wiki/Dhofar_Governorate"
+  },
+  {
+    "name": "Gobabeb, Namib Desert",
+    "lat": -23.56,
+    "lon": 15.04,
+    "country": "Namibia",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Fog desert with gravel plains and dunes; aeolian and hyperarid analog",
+    "source": "https://en.wikipedia.org/wiki/Gobabeb"
+  },
+  {
+    "name": "Vredefort impact structure",
+    "lat": -27.0,
+    "lon": 27.5,
+    "country": "South Africa",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "academic",
+    "note": "World's largest verified impact structure; shock metamorphism analog",
+    "source": "https://en.wikipedia.org/wiki/Vredefort_impact_structure"
+  },
+  {
+    "name": "Makgadikgadi pans",
+    "lat": -20.75,
+    "lon": 25.5,
+    "country": "Botswana",
+    "body": "mars",
+    "types": [
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Salt pans with palaeolake shorelines; Martian paleolake analog",
+    "source": "https://en.wikipedia.org/wiki/Makgadikgadi_Pan"
+  },
+  {
+    "name": "Tso Kar, Ladakh",
+    "lat": 33.3,
+    "lon": 78.0,
+    "country": "India",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology"
+    ],
+    "used_by": "ISRO, academic",
+    "note": "Cold arid high-altitude salt lake and permafrost",
+    "source": "https://en.wikipedia.org/wiki/Tso_Kar"
+  },
+  {
+    "name": "Matanomadh, Kutch",
+    "lat": 23.55,
+    "lon": 68.98,
+    "country": "India",
+    "body": "mars",
+    "types": [
+      "petrology"
+    ],
+    "used_by": "ISRO, academic",
+    "note": "Jarosite-bearing deposits; Mars sulfate mineral analog",
+    "source": "https://en.wikipedia.org/wiki/Kutch_district"
+  },
+  {
+    "name": "Dalangtan playa, Qaidam Basin",
+    "lat": 38.6,
+    "lon": 91.7,
+    "country": "China",
+    "body": "mars",
+    "types": [
+      "process",
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "CNSA, academic",
+    "note": "Hyperarid salt playa with sulfates and chlorides at high altitude",
+    "source": "https://en.wikipedia.org/wiki/Qaidam_Basin"
+  },
+  {
+    "name": "Lenghu (Mars Camp), Qaidam Basin",
+    "lat": 38.75,
+    "lon": 93.3,
+    "country": "China",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "human-ops"
+    ],
+    "used_by": "CNSA, academic",
+    "note": "Yardang field hosting the Mars base camp analog",
+    "source": "https://en.wikipedia.org/wiki/Lenghu"
+  },
+  {
+    "name": "Kumtag Desert",
+    "lat": 40.3,
+    "lon": 92.0,
+    "country": "China",
+    "body": "mars",
+    "types": [
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Sand dunes shaped by wind; Martian aeolian analog",
+    "source": "https://en.wikipedia.org/wiki/Kumtag_Desert"
+  },
+  {
+    "name": "Turpan Depression",
+    "lat": 42.7,
+    "lon": 89.2,
+    "country": "China",
+    "body": "mars",
+    "types": [
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Hyperarid desert basin below sea level with salt crusts",
+    "source": "https://en.wikipedia.org/wiki/Turpan_Depression"
+  },
+  {
+    "name": "Tolbachik, Kamchatka",
+    "lat": 55.83,
+    "lon": 160.33,
+    "country": "Russia",
+    "body": "both",
+    "types": [
+      "planetary",
+      "petrology"
+    ],
+    "used_by": "Soviet/Russian lunar program, academic",
+    "note": "Basaltic volcano; Lunokhod rover trials and fresh lava field",
+    "source": "https://en.wikipedia.org/wiki/Tolbachik"
+  },
+  {
+    "name": "Izu-Oshima",
+    "lat": 34.73,
+    "lon": 139.39,
+    "country": "Japan",
+    "body": "moon",
+    "types": [
+      "planetary",
+      "engineering"
+    ],
+    "used_by": "JAXA",
+    "note": "Basaltic volcano with tephra; lunar rover test field",
+    "source": "https://en.wikipedia.org/wiki/Izu_%C5%8Cshima"
+  },
+  {
+    "name": "Arkaroola",
+    "lat": -30.3,
+    "lon": 139.33,
+    "country": "Australia",
+    "body": "mars",
+    "types": [
+      "planetary",
+      "astrobiology",
+      "human-ops"
+    ],
+    "used_by": "Mars Society Australia",
+    "note": "Rugged arid ranges with hydrothermal and Mars-like terrain",
+    "source": "https://en.wikipedia.org/wiki/Arkaroola"
+  },
+  {
+    "name": "Kati Thanda-Lake Eyre",
+    "lat": -28.4,
+    "lon": 137.3,
+    "country": "Australia",
+    "body": "mars",
+    "types": [
+      "process"
+    ],
+    "used_by": "academic",
+    "note": "Large ephemeral salt lake; Mars evaporite and paleolake analog",
+    "source": "https://en.wikipedia.org/wiki/Kati_Thanda%E2%80%93Lake_Eyre"
+  },
+  {
+    "name": "Wolfe Creek crater",
+    "lat": -19.17,
+    "lon": 127.8,
+    "country": "Australia",
+    "body": "both",
+    "types": [
+      "planetary"
+    ],
+    "used_by": "academic",
+    "note": "Well-preserved simple impact crater in arid terrain",
+    "source": "https://en.wikipedia.org/wiki/Wolfe_Creek_crater"
+  },
+  {
+    "name": "Wairakei-Taupo geothermal field",
+    "lat": -38.62,
+    "lon": 176.1,
+    "country": "New Zealand",
+    "body": "mars",
+    "types": [
+      "astrobiology",
+      "petrology"
+    ],
+    "used_by": "academic",
+    "note": "Silica sinter terraces and geothermal deposits; Mars hydrothermal analog",
+    "source": "https://en.wikipedia.org/wiki/Wairakei"
+  },
+  {
+    "name": "El Pinacate",
+    "lat": 31.77,
+    "lon": -113.5,
+    "country": "Mexico",
+    "body": "both",
+    "types": [
+      "planetary",
+      "human-ops"
+    ],
+    "used_by": "NASA",
+    "note": "Volcanic field with maars; Apollo astronaut training",
+    "source": "https://en.wikipedia.org/wiki/El_Pinacate_y_Gran_Desierto_de_Altar_Biosphere_Reserve"
+  },
+  {
+    "name": "Cuatro Cienegas",
+    "lat": 26.98,
+    "lon": -102.07,
+    "country": "Mexico",
+    "body": "mars",
+    "types": [
+      "astrobiology"
+    ],
+    "used_by": "NASA, academic",
+    "note": "Desert spring pools with stromatolites; early life analog",
+    "source": "https://en.wikipedia.org/wiki/Cuatro_Ci%C3%A9negas"
+  },
+  {
+    "name": "Skouriotissa, Troodos",
+    "lat": 35.09,
+    "lon": 32.89,
+    "country": "Cyprus",
+    "body": "mars",
+    "types": [
+      "petrology",
+      "astrobiology"
+    ],
+    "used_by": "academic",
+    "note": "Ophiolite-related sulfide mine with acidic sulfate deposits",
+    "source": "https://en.wikipedia.org/wiki/Troodos_Ophiolite"
+  }
+]

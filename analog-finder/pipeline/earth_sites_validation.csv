@@ -1,0 +1,73 @@
+name,lat,lon,type,analog_for,notes
+Atacama Desert (Yungay),-24.08,-69.92,analog,Mars,Driest non-polar desert; NASA rover and life-detection tests
+Haughton Crater (Devon Island),75.38,-89.68,analog,Mars;Moon,Haughton-Mars Project; polar desert impact crater
+Death Valley (Badwater),36.23,-116.77,analog,Mars,Salt flats and playas; Mars rover tests
+Mars Desert Research Station (Utah),38.41,-110.79,analog,Mars,Mars Society habitat; red sedimentary terrain
+Wright Valley (Antarctic Dry Valleys),-77.52,161.85,analog,Mars,Cold hyper-arid; closest climate analog
+Rio Tinto (Spain),37.69,-6.59,analog,Mars,Acidic iron-rich river; Meridiani-like chemistry
+Timanfaya (Lanzarote),29.02,-13.78,analog,Moon;Mars,ESA PANGAEA training site; basaltic lava fields
+Mauna Kea (Hawaii),19.82,-155.47,analog,Moon,PISCES lunar regolith tests; volcanic soils
+Wadi Rum (Jordan),29.57,35.42,analog,Mars,Red sandstone desert; Mars field simulations
+Bockfjord (Svalbard),79.43,13.32,analog,Mars,AMASE expeditions; volcanic and permafrost
+Dresser Formation (Pilbara),-21.15,119.42,analog,Mars,Ancient stromatolites; biosignature training
+Holuhraun (Iceland),64.87,-16.83,analog,Mars;Moon,Fresh basaltic lava field; rover tests
+Meteor Crater (Arizona),35.03,-111.02,analog,Moon,Apollo astronaut geology training
+Black Point Lava Flow (Arizona),35.58,-111.63,analog,Moon,NASA Desert RATS field tests
+Craters of the Moon (Idaho),43.42,-113.52,analog,Moon,Lava fields used for lunar EVA tests
+Ries Crater (Germany),48.88,10.56,analog,Moon,Apollo 14 and 17 crew training
+HI-SEAS (Mauna Loa),19.60,-155.49,analog,Mars,Long-duration Mars habitat simulations
+Gypsum Hill (Axel Heiberg Island),79.41,-90.73,analog,Mars,Cold springs in permafrost
+Lonar Crater (India),19.98,76.51,analog,Mars;Moon,Basaltic impact crater
+Dallol (Danakil Depression),14.24,40.30,analog,Mars,Hyper-acid hot springs; extreme environment
+Amazon rainforest,-3.47,-62.21,decoy,,Dense vegetation; humid
+Congo basin,0.50,22.00,decoy,,Dense vegetation; humid
+Sofia (Bulgaria),42.70,23.32,decoy,,Urban; local reference point for the demo
+Varna coast (Bulgaria),43.20,27.90,decoy,,Coastal; vegetated
+Paris basin farmland,48.60,2.00,decoy,,Flat farmland
+Iowa farmland,42.00,-93.50,decoy,,Flat farmland
+Netherlands polders,52.30,5.20,decoy,,Flat and wet
+Erg Chebbi dunes (Morocco),31.15,-3.97,decoy,,Sand sea; plausible partial match
+Sossusvlei dunes (Namibia),-24.73,15.34,decoy,,Sand sea; plausible partial match
+Gobi Desert,43.50,104.00,decoy,,Cold desert; plausible partial match
+Rub al Khali,20.00,51.00,decoy,,Sand sea; hot
+Taklamakan Desert,38.90,82.50,decoy,,Sand sea; cold winters
+Mojave Desert,35.00,-116.00,decoy,,Desert scrub
+Sonoran Desert,32.30,-112.90,decoy,,Desert with cacti
+Patagonian steppe,-46.00,-70.00,decoy,,Dry grassland; windy
+Siberian taiga,60.00,100.00,decoy,,Boreal forest
+Mont Blanc (Alps),45.83,6.86,decoy,,High relief; snow and ice
+Everest region (Himalaya),27.99,86.93,decoy,,Extreme relief
+Tibetan Plateau,33.00,88.00,decoy,,High cold plateau; plausible partial match
+Greenland ice sheet,72.58,-38.46,decoy,,Ice; very bright albedo
+Dome C (Antarctica),-75.10,123.35,analog,Moon;Mars,"Concordia Station; isolation analog, not a terrain analog"
+Grand Canyon,36.10,-112.10,decoy,,Deep canyon; Valles Marineris look-alike test
+Yellowstone,44.60,-110.50,decoy,,Forest and geothermal
+Mount Etna,37.75,14.99,analog,Moon;Mars,Fresh volcanic soils and lava tubes; ESA and DLR rover tests (Wikipedia)
+Kilimanjaro,-3.07,37.35,decoy,,Volcano with forest belt
+Uluru,-25.34,131.04,decoy,,Red desert; plausible partial match
+Simpson Desert,-25.00,137.00,decoy,,Red dune fields
+Argentine Pampas,-35.00,-61.00,decoy,,Grassland farmland
+Serengeti,-2.33,34.83,decoy,,Savanna
+Mekong Delta,10.00,105.80,decoy,,Wet farmland
+Bangladesh lowlands,23.70,90.40,decoy,,Flat wet farmland
+Scottish Highlands,57.00,-4.50,decoy,,Moorland; wet
+Norwegian fjords,61.00,7.00,decoy,,High relief; wet
+Canadian Shield,55.00,-75.00,decoy,,Lakes and forest
+Alaska North Slope,68.60,-149.60,decoy,,Tundra
+Salar de Uyuni (Bolivia),-20.13,-67.49,decoy,,Salt flat; plausible partial match
+Borneo,1.00,114.00,decoy,,Rainforest
+Central Valley (California),36.70,-119.80,decoy,,Irrigated farmland
+Ukrainian steppe,48.50,35.00,decoy,,Farmland steppe
+Kazakh steppe,48.00,68.00,decoy,,Dry grassland
+Lake Salda (Turkey),37.55,29.68,analog,Mars,NASA Analog Explorer: sediments like Jezero Crater
+Medicine Lake Volcano / Lava Beds (California),41.71,-121.51,analog,Moon;Mars,NASA Analog Explorer: lava caves
+Pilot Valley (Utah),41.05,-113.90,analog,Mars,NASA Analog Explorer: perchlorate salts; Mars northern plains
+Askja (Iceland),65.05,-16.75,analog,Moon,NASA Analog Explorer: GPR tests for lunar subsurface ice; Artemis training
+Verde Valley (Arizona),34.60,-111.90,analog,Mars,NASA Analog Explorer: biosignature preservation; Gale/Mount Sharp
+Kilauea (Hawaii),19.41,-155.28,analog,Moon;Mars,NASA Analog Explorer: basalt fieldwork vs Apollo 15 Hadley Rille
+Sudbury Crater (Ontario),46.60,-81.20,analog,Mars;Moon,Impact structure; cold; accessible (Wikipedia)
+Teide National Park (Tenerife),28.27,-16.64,analog,Moon;Mars,Basalt and phonolite; UV life-detection tests (Wikipedia)
+Piton de la Fournaise (Reunion),-21.24,55.71,analog,Moon;Mars,LMAS active basaltic volcano (Wikipedia)
+Tablelands (Gros Morne),49.47,-57.95,analog,Mars;Moon,Exposed mantle and oceanic crust (Wikipedia)
+Laguna de Tirez (Spain),39.54,-3.36,analog,Mars,Sulfate-rich lagoon (Wikipedia)
+Mono Lake (California),38.00,-119.02,analog,Mars,Alkaline lake; astrobiology analog (Foucher et al. 2021)

@@ -1,0 +1,458 @@
+{
+ "validation": {
+  "mars": {
+   "auc_env": 0.7455621301775148,
+   "auc_geo": 0.6,
+   "nenv": 13,
+   "ngeo": 15,
+   "nneg": 26,
+   "env_pct": 81.19824585652715,
+   "median_pct": 73.98345123958634,
+   "top10": 31.521739130434785,
+   "nknown": 92
+  },
+  "moon": {
+   "auc_env": 0.8153846153846154,
+   "auc_geo": 0.7041420118343196,
+   "nenv": 5,
+   "ngeo": 13,
+   "nneg": 26,
+   "env_pct": 67.96206476257493,
+   "median_pct": 67.96206476257493,
+   "top10": 17.94871794871795,
+   "nknown": 39
+  }
+ },
+ "findings": {
+  "shackleton-connecting-ridge": [
+   {
+    "place": "Nationalparken, Greenland (NORTH AMERICA)",
+    "lat": 82.875,
+    "lon": -33.625,
+    "score": 69.17747892939381
+   },
+   {
+    "place": "Nunavut, Canada (ARCTIC ARCHIPELAGO)",
+    "lat": 82.875,
+    "lon": -77.875,
+    "score": 68.52129404883293
+   },
+   {
+    "place": "Nationalparken, Greenland (NORTH AMERICA)",
+    "lat": 82.125,
+    "lon": -54.375,
+    "score": 66.12312496800205
+   },
+   {
+    "place": "Nunavut, Canada (ARCTIC ARCHIPELAGO)",
+    "lat": 79.625,
+    "lon": -81.625,
+    "score": 64.11398035107443
+   },
+   {
+    "place": "Antarctica, Antarctica (Transantarctic Mountains)",
+    "lat": -84.125,
+    "lon": 168.125,
+    "score": 63.12735493893364
+   }
+  ],
+  "de-gerlache-rim-2": [
+   {
+    "place": "Nationalparken, Greenland (NORTH AMERICA)",
+    "lat": 82.875,
+    "lon": -33.625,
+    "score": 73.76964145655548
+   },
+   {
+    "place": "Nunavut, Canada (ARCTIC ARCHIPELAGO)",
+    "lat": 82.875,
+    "lon": -77.875,
+    "score": 73.41288972331554
+   },
+   {
+    "place": "Nationalparken, Greenland (NORTH AMERICA)",
+    "lat": 82.125,
+    "lon": -54.375,
+    "score": 69.56790543076595
+   },
+   {
+    "place": "Nunavut, Canada (ARCTIC ARCHIPELAGO)",
+    "lat": 80.125,
+    "lon": -71.875,
+    "score": 68.33252721421175
+   },
+   {
+    "place": "Antarctica, Antarctica (Transantarctic Mountains)",
+    "lat": -83.875,
+    "lon": 168.125,
+    "score": 67.68948552123713
+   }
+  ],
+  "malapert-massif": [
+   {
+    "place": "Coquimbo, Argentina (SOUTH AMERICA)",
+    "lat": -30.125,
+    "lon": -69.875,
+    "score": 70.1513982714969
+   },
+   {
+    "place": "Xizang, China (ASIA)",
+    "lat": 33.125,
+    "lon": 79.875,
+    "score": 66.28188835204891
+   },
+   {
+    "place": "Atacama, Chile (SOUTH AMERICA)",
+    "lat": -26.625,
+    "lon": -69.625,
+    "score": 65.55105178230681
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 38.875,
+    "lon": 74.375,
+    "score": 65.02323797340857
+   },
+   {
+    "place": "Tarapac\u00e1, Chile (SOUTH AMERICA)",
+    "lat": -19.125,
+    "lon": -69.875,
+    "score": 64.77418530382393
+   }
+  ],
+  "slater-plain": [
+   {
+    "place": "Lima Province, Peru (SOUTH AMERICA)",
+    "lat": -12.375,
+    "lon": -76.625,
+    "score": 78.87288660725297
+   },
+   {
+    "place": "Arequipa, Peru (SOUTH AMERICA)",
+    "lat": -15.375,
+    "lon": -74.625,
+    "score": 77.67610263905455
+   },
+   {
+    "place": "Catamarca, Argentina (SOUTH AMERICA)",
+    "lat": -25.125,
+    "lon": -68.625,
+    "score": 77.00609543820062
+   },
+   {
+    "place": "Qinghai, China (ASIA)",
+    "lat": 36.125,
+    "lon": 95.375,
+    "score": 76.96414294436427
+   },
+   {
+    "place": "Atacama, Chile (SOUTH AMERICA)",
+    "lat": -28.125,
+    "lon": -70.125,
+    "score": 76.52289690902121
+   }
+  ],
+  "haworth": [
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 37.375,
+    "lon": 87.125,
+    "score": 68.94454707944426
+   },
+   {
+    "place": "Xizang, China (ASIA)",
+    "lat": 33.125,
+    "lon": 79.625,
+    "score": 68.24342895908526
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 35.875,
+    "lon": 81.875,
+    "score": 67.74604459043914
+   },
+   {
+    "place": "Nunavut, Canada (ARCTIC ARCHIPELAGO)",
+    "lat": 81.375,
+    "lon": -71.375,
+    "score": 67.55318560744799
+   },
+   {
+    "place": "Badakhshan, Afghanistan (ASIA)",
+    "lat": 37.375,
+    "lon": 72.875,
+    "score": 66.547809358527
+   }
+  ],
+  "jezero-perseverance": [
+   {
+    "place": "Borkou, Chad (AFRICA)",
+    "lat": 20.625,
+    "lon": 18.125,
+    "score": 79.7651881869408
+   },
+   {
+    "place": "Al Bahr al Ahmar, Egypt (AFRICA)",
+    "lat": 22.125,
+    "lon": 35.625,
+    "score": 79.35097214597364
+   },
+   {
+    "place": "Red Sea, Sudan (AFRICA)",
+    "lat": 18.375,
+    "lon": 37.125,
+    "score": 78.83687046390096
+   },
+   {
+    "place": "Arica y Parinacota, Chile (SOUTH AMERICA)",
+    "lat": -18.875,
+    "lon": -70.125,
+    "score": 78.62259129641788
+   },
+   {
+    "place": "Atacama, Chile (SOUTH AMERICA)",
+    "lat": -25.875,
+    "lon": -69.875,
+    "score": 76.38565195811208
+   }
+  ],
+  "gale-curiosity": [
+   {
+    "place": "Borkou, Chad (AFRICA)",
+    "lat": 19.875,
+    "lon": 18.375,
+    "score": 83.31837384169711
+   },
+   {
+    "place": "Yazd, Iran (ASIA)",
+    "lat": 32.625,
+    "lon": 54.625,
+    "score": 78.10104991812524
+   },
+   {
+    "place": "Tadjourah, Djibouti (AFRICA)",
+    "lat": 11.625,
+    "lon": 42.625,
+    "score": 76.43977447597292
+   },
+   {
+    "place": "Sistan and Baluchestan, Iran (ASIA)",
+    "lat": 29.625,
+    "lon": 59.875,
+    "score": 76.42623345385708
+   },
+   {
+    "place": "Al Mahrah, Yemen (ASIA)",
+    "lat": 15.375,
+    "lon": 51.375,
+    "score": 76.41742635880139
+   }
+  ],
+  "utopia-viking-2": [
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 37.125,
+    "lon": 87.125,
+    "score": 66.17782169653076
+   },
+   {
+    "place": "Xizang, China (ASIA)",
+    "lat": 34.125,
+    "lon": 84.625,
+    "score": 63.66374267302801
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 34.875,
+    "lon": 79.125,
+    "score": 61.69560127566171
+   },
+   {
+    "place": "Gorno-Badakhshan, Tajikistan (ASIA)",
+    "lat": 38.625,
+    "lon": 74.125,
+    "score": 60.31812806155558
+   },
+   {
+    "place": "Xizang, China (ASIA)",
+    "lat": 32.125,
+    "lon": 80.625,
+    "score": 58.97246059657003
+   }
+  ],
+  "arcadia-planitia": [
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 37.125,
+    "lon": 87.625,
+    "score": 74.9515572963067
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 35.875,
+    "lon": 84.125,
+    "score": 71.67060780708114
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 34.875,
+    "lon": 79.375,
+    "score": 70.88891808836996
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 36.375,
+    "lon": 90.875,
+    "score": 68.65351798507034
+   },
+   {
+    "place": "Qinghai, China (ASIA)",
+    "lat": 38.875,
+    "lon": 95.625,
+    "score": 66.06499023471855
+   }
+  ],
+  "meridiani-opportunity": [
+   {
+    "place": "Makkah, Saudi Arabia (ASIA)",
+    "lat": 23.125,
+    "lon": 38.875,
+    "score": 78.04298340148549
+   },
+   {
+    "place": "Ash Sharqiyah South, Oman (ASIA)",
+    "lat": 21.625,
+    "lon": 59.375,
+    "score": 77.8673608768749
+   },
+   {
+    "place": "Abyan, Yemen (ASIA)",
+    "lat": 13.625,
+    "lon": 47.125,
+    "score": 75.46892236023973
+   },
+   {
+    "place": "Tabuk, Saudi Arabia (ASIA)",
+    "lat": 25.875,
+    "lon": 36.875,
+    "score": 74.3841653549348
+   },
+   {
+    "place": "Hormozgan, Iran (ASIA)",
+    "lat": 25.625,
+    "lon": 58.875,
+    "score": 73.31228268304989
+   }
+  ],
+  "green-valley-phoenix": [
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 35.625,
+    "lon": 84.125,
+    "score": 75.68222062107617
+   },
+   {
+    "place": "Xinjiang, China (ASIA)",
+    "lat": 34.875,
+    "lon": 79.125,
+    "score": 75.05664129745753
+   },
+   {
+    "place": "Xizang, China (ASIA)",
+    "lat": 36.125,
+    "lon": 88.125,
+    "score": 73.17749618440912
+   },
+   {
+    "place": "Qinghai, China (ASIA)",
+    "lat": 38.375,
+    "lon": 97.125,
+    "score": 65.09233864856
+   },
+   {
+    "place": "Nationalparken, Greenland (NORTH AMERICA)",
+    "lat": 81.625,
+    "lon": -60.875,
+    "score": 64.42128962464935
+   }
+  ],
+  "melas-chasma": [
+   {
+    "place": "Borkou, Chad (AFRICA)",
+    "lat": 19.875,
+    "lon": 18.375,
+    "score": 70.45991634642338
+   },
+   {
+    "place": "Sistan and Baluchestan, Iran (ASIA)",
+    "lat": 29.625,
+    "lon": 59.875,
+    "score": 68.34361547276474
+   },
+   {
+    "place": "Abyan, Yemen (ASIA)",
+    "lat": 13.625,
+    "lon": 46.125,
+    "score": 67.86998633219707
+   },
+   {
+    "place": "Ica, Peru (SOUTH AMERICA)",
+    "lat": -14.375,
+    "lon": -75.375,
+    "score": 67.75138478509626
+   },
+   {
+    "place": "Atacama, Chile (SOUTH AMERICA)",
+    "lat": -25.875,
+    "lon": -69.375,
+    "score": 66.75701424821406
+   }
+  ]
+ },
+ "ablation": [
+  {
+   "step": "Before official resources (MERRA-2 / NASA POWER climate, latitude model for Moon)",
+   "mars_env": 0.72,
+   "mars_geo": 0.57,
+   "moon_env": 0.75,
+   "moon_geo": 0.67
+  },
+  {
+   "step": "+ JAXA GCOM-C LST swing, JAXA GSMaP rain, LRO Diviner Moon temperature and ice, USGS lunar geologic map",
+   "mars_env": 0.72,
+   "mars_geo": 0.63,
+   "moon_env": 0.78,
+   "moon_geo": 0.69
+  },
+  {
+   "step": "+ JAXA JASMES MODIS NDVI (biology)",
+   "mars_env": 0.74,
+   "mars_geo": 0.63,
+   "moon_env": 0.82,
+   "moon_geo": 0.71
+  },
+  {
+   "step": "+ GLiM rock type at weight 1 (USGS lunar map and Mars site geology on the target side)",
+   "mars_env": 0.75,
+   "mars_geo": 0.58,
+   "moon_env": 0.79,
+   "moon_geo": 0.69,
+   "rejected": true
+  },
+  {
+   "step": "+ GLiM rock type at weight 0.25 in the Overall preset (kept; full weight in Instruments and ISRU)",
+   "mars_env": 0.75,
+   "mars_geo": 0.6,
+   "moon_env": 0.82,
+   "moon_geo": 0.7
+  },
+  {
+   "step": "JAXA AMSR2 soil moisture instead of MERRA-2",
+   "mars_env": 0.75,
+   "mars_geo": 0.59,
+   "moon_env": 0.77,
+   "moon_geo": 0.63,
+   "rejected": true
+  }
+ ]
+}

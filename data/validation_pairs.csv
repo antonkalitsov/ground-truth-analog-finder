@@ -1,0 +1,10 @@
+target_body,target_name,target_lat,target_lon,expected_earth_site,source,analogy_type,expect_terrain_match
+Mars,Utopia Planitia (Viking 2),48.27,-134.01,Death Valley (Badwater),NASA Analog Explorer,engineering/terrain,yes
+Mars,Jezero Crater,18.44,77.45,Lake Salda (Turkey),NASA Analog Explorer,mineralogy,partial
+Mars,Jezero Crater,18.44,77.45,Atacama Desert (Yungay),NASA Analog Explorer,astrobiology/terrain,yes
+Mars,Northern plains (Vastitas Borealis),68.00,0.00,Pilot Valley (Utah),NASA Analog Explorer,chemistry,partial
+Mars,Gale Crater / Mount Sharp,-5.08,137.85,Verde Valley (Arizona),NASA Analog Explorer,astrobiology,partial
+Moon,Hadley Rille (Apollo 15),26.13,3.63,Kilauea (Hawaii),NASA Analog Explorer,basalt terrain,yes
+Moon,Copernicus Crater,9.62,-20.08,Meteor Crater (Arizona),NASA Planetary Analogs page,impact,yes
+Moon,Lunar south pole (Shackleton),-89.67,129.20,Haughton Crater (Devon Island),Wikipedia,terrain/polar,yes
+Moon,Mare Tranquillitatis pit,8.34,33.22,Medicine Lake Volcano / Lava Beds (California),NASA Analog Explorer,lava caves,partial
