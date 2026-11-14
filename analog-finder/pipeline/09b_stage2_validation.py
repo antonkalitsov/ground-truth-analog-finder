@@ -29,6 +29,14 @@ PARTIAL = ("plausible", "sand sea", "desert", "dune", "salt flat", "canyon")
 TERRAIN = ("slope", "rough", "relief")
 
 
+def clean(o):
+    """Replace NaN (a site with no usable 30 m zone) by null, which JSON allows."""
+    if isinstance(o, dict): return {k: clean(v) for k, v in o.items()}
+    if isinstance(o, list): return [clean(v) for v in o]
+    if isinstance(o, float) and not np.isfinite(o): return None
+    return o
+
+
 def auc(pos, neg):
     pos, neg = np.asarray(pos, float), np.asarray(neg, float)
     if not len(pos) or not len(neg):
@@ -125,8 +133,9 @@ def main():
             print(f"{lab:16s}{out[k]['env']:12.2f}{out[k]['geo']:13.2f}{out[k]['all']:12.2f}")
         if out["no30m"]:
             print("  no usable 30 m zone:", ", ".join(out["no30m"]))
-    s2["validation"] = res
-    json.dump(s2, open(os.path.join(D, "stage2.json"), "w"), separators=(",", ":"))
+    s2["validation"] = clean(res)
+    # allow_nan=False: a NaN would make the file invalid JSON and the browser would silently drop stage 2
+    json.dump(s2, open(os.path.join(D, "stage2.json"), "w"), separators=(",", ":"), allow_nan=False)
 
 
 if __name__ == "__main__":

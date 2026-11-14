@@ -391,7 +391,7 @@ def main():
     chips = sorted(int(f.split(".")[0]) for f in os.listdir(os.path.join(D, "chips", "earth"))) if os.path.isdir(os.path.join(D, "chips", "earth")) else []
     out["earthChips"] = dict(px=CHIP_PX, sizeKm=CELL_KM, minAbsLat=CHIP_MIN_LAT, encoding="int16 metres, row differences",
                              source="Copernicus GLO-30 (ESA)", cells=chips)
-    json.dump(out, open(os.path.join(D, "stage2.json"), "w"), separators=(",", ":"))
+    json.dump(out, open(os.path.join(D, "stage2.json"), "w"), separators=(",", ":"), allow_nan=False)
     json.dump(man, open(os.path.join(D, "manifest.json"), "w"), separators=(",", ":"))
     print("wrote stage2.json", os.path.getsize(os.path.join(D, "stage2.json")), "bytes")
 
