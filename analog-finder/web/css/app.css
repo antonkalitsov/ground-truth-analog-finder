@@ -334,3 +334,12 @@ body.touring .results, body.touring .detail, body.touring .tgt { padding-bottom:
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .mask > span { transform: none; } .mask::after { display: none; } .mark-rule { transform: none; } .mark-coord, .mark-sub { opacity: 1; }
 }
+
+/* ------------------------------------------------------------------ stage 2: landing zone at 30 m */
+.refine { display: inline-block; margin-top: 8px; font-size: 12.5px; color: var(--accent); border: 1px solid var(--accent); padding: 5px 10px; }
+.refine:hover { background: var(--accent); color: var(--bg); }
+.finelead { font-size: 13.5px; max-width: 68ch; }
+.finelead b { font-weight: 500; }
+#fineChart { width: 100%; height: 150px; display: block; margin: 12px 0 2px; }
+.traits.fine { margin-top: 12px; }
+.barx.wide { width: 120px; }

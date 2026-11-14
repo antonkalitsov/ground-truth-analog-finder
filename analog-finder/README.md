@@ -144,6 +144,7 @@ python 06_mars_moon_grids.py ../raw ../raw/grids ../web/assets
 python 06b_lro_layers.py ../raw ../web/assets            # WAC picker map, lunar geology, Diviner gridding
 python 07_build_pack.py ../raw ../web
 python 08_findings.py ../raw ../web ../FINDINGS.md
+python 09_stage2.py ../raw ../web                        # stage 2: 30 m landing zones for Jezero and the Moon regions
 ```
 
 `pipeline/targets.json` lists the Moon and Mars targets with sources; `pipeline/known_sites.json` lists the 107 known analog sites; `pipeline/earth_sites_validation.csv` is the analog / non-analog validation set.

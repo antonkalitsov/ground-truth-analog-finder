@@ -13,15 +13,17 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const state = {
   body: null, target: null, preset: 'polar', weights: {}, scores: null, sorted: null,
-  cands: [], known: [], tab: 'new', type: null, showAll: false, detail: null, touring: false,
+  cands: [], known: [], tab: 'new', type: null, showAll: false, detail: null, touring: false, refine: false,
 };
-let D, earth, mars, tgt = {}, chipSeq = 0, abortChip, planets = null, appReady = null;
+let D, S2 = null, earth, mars, tgt = {}, chipSeq = 0, abortChip, planets = null, appReady = null;
 let createGlobe, fetchEarthTerrain, gridFromInt16, terrainStats, renderHillshade;
 window.__af = { state, get D() { return D; } };
 
 // The 3 MB data pack starts downloading at once, in parallel with the title card, so the app is ready by the time a planet is chosen.
 const dataP = S.loadData('data/');
 dataP.catch(() => {});
+// Stage 2 (30 m landing zones for the named fine targets) is optional: without the file the app works as before.
+const s2P = fetch('data/stage2.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
 
 // ------------------------------------------------------------------ formatting
 const UNITS = {
@@ -171,7 +173,7 @@ async function initApp() {
   // globe and terrain code is fetched only when the app stage is first needed
   const [g, t] = await Promise.all([import('./globe.js'), import('./terrain.js')]);
   createGlobe = g.createGlobe; ({ fetchEarthTerrain, gridFromInt16, terrainStats, renderHillshade } = t);
-  D = await dataP;
+  D = await dataP; S2 = await s2P;
   earth = createGlobe($('#earth'), { baseUrl: 'assets/earth.jpg', planetRadiusKm: 6371, atmosphere: null, graticule: false, view: { lat: 15, lon: 20, zoom: 1 }, minZoom: 0.8, maxZoom: 40 });
   earth.on('click', (e) => { const i = S.nearestCell(D, e.lat, e.lon, 2); if (i >= 0) openDetail({ i }); });
   earth.on('markerclick', (e) => {
@@ -436,6 +438,35 @@ function rampColor(t) {
 }
 const LUTC = Array.from({ length: 256 }, (_, i) => rampColor(i / 255));
 
+// ------------------------------------------------------------------ stage 2: the 30 m landing zone inside a 28 km cell
+const s2Target = () => (S2 && state.target && state.target.named && S2.targets[state.target.id]) || null;
+const cellKey = (i) => Math.round((90 - D.lat[i]) / D.man.grid.res - 0.5) * D.nx + Math.round((D.lon[i] + 180) / D.man.grid.res - 0.5);
+const fineOf = (i) => { const T = s2Target(); return (T && T.cells[cellKey(i)]) || null; };
+const FINE_IDX = { slope: 0, rough: 1, relief: 2 };
+// Same weighted average as stage 1, with the three coarse terrain similarities replaced by the ones measured at 30 m.
+// The trait rows of a cell. In the refined view the three terrain rows are the 30 m ones: Earth zone against the target zone,
+// measured the same way, so the card, the list bars and the score all describe the same thing.
+const FINE_LABEL = { slope: 'Median slope', rough: 'Roughness, 300 m steps', relief: 'Relief in the zone' };
+function rowsFor(i) {
+  const rows = S.explain(D, state.target.traits, state.weights, i), f = state.refine ? fineOf(i) : null;
+  if (!f) return rows;
+  const tz = s2Target().target;
+  const val = { slope: [f.p50, tz.p50], rough: [f.rough[2], tz.rough[2]], relief: [f.relief, tz.relief] };
+  return rows.map((r) => (r.tr.id in FINE_IDX
+    ? { ...r, fine: true, sim: f.sim[FINE_IDX[r.tr.id]], earth: val[r.tr.id][0], target: val[r.tr.id][1], beyond: false, tr: { ...r.tr, label: `${FINE_LABEL[r.tr.id]} (30 m)` } }
+    : r));
+}
+const cellScore = (i) => { const f = state.refine ? fineOf(i) : null; return f ? stage2Score(i, f) : state.scores[i]; };
+
+function stage2Score(i, f) {
+  let s = 0, w = 0;
+  for (const r of S.explain(D, state.target.traits, state.weights, i)) {
+    if (r.w <= 0) continue;
+    s += r.w * (r.tr.id in FINE_IDX ? f.sim[FINE_IDX[r.tr.id]] : r.sim); w += r.w;
+  }
+  return w ? (100 * s) / w : 0;
+}
+
 function rescore() {
   if (!state.target) return;
   state.scores = S.scoreAll(D, state.target.traits, state.weights, state.scores);
@@ -455,6 +486,9 @@ function rescore() {
   $('#lgLo').textContent = Math.round(lo); $('#lgHi').textContent = `${Math.round(hi)} of 100`;
   state.common = commonness();
   state.cands = S.pickCandidates(D, sc, { n: 10, sepKm: 300, excludeKm: 150, known: D.man.known });
+  state.cands.forEach((c, r) => { c.rank1 = r + 1; c.fine = fineOf(c.i); c.score2 = c.fine ? stage2Score(c.i, c.fine) : null; });
+  if (!s2Target()) state.refine = false;
+  if (state.refine) state.cands.sort((a, b) => (b.score2 ?? -1) - (a.score2 ?? -1) || a.rank1 - b.rank1);
   state.known = D.man.known.filter((k) => k.body === state.body || k.body === 'both').map((k) => {
     const i = S.nearestCell(D, k.lat, k.lon, 3); return i < 0 ? null : { k, i, score: sc[i], pct: pctOf(sc[i]) };
   }).filter(Boolean).sort((a, b) => b.score - a.score);
@@ -508,7 +542,7 @@ function aspects(rows) {
   return [...g.values()].map((a) => ({ ...a, sim: a.s / a.w }));
 }
 function aspectBars(i) {
-  const as = aspects(S.explain(D, state.target.traits, state.weights, i));
+  const as = aspects(rowsFor(i));
   return `<div class="asp" role="img" aria-label="${esc(as.map((a) => `${ASPECT[a.name] || a.name} ${Math.round(a.sim * 100)}`).join(', '))}">` +
     as.map((a) => `<span class="${lvl(a.sim)}">${esc(ASPECT[a.name] || a.name)}<i><b style="transform:scaleX(${a.sim.toFixed(2)})"></b></i></span>`).join('') + '</div>';
 }
@@ -529,6 +563,7 @@ function drawProfile(rows, body) {
 // Everything is HTML/SVG positioned in percent, so it scales with the panel and needs no chart library.
 function traitScale(r) {
   const tr = r.tr, sim = `<span class="sim">${Math.round(r.sim * 100)}% match</span>`;
+  if (r.fine) return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} in the Earth zone, ${esc(fmt(tr.id, r.target, 'target'))} in the target zone. Details under "Landing zone at 30 m".</div></div>`;
   if (tr.transform === 'cat') return `<div class="pf ${lvl(r.sim)}"><div class="l"><b>${esc(tr.label)}</b><span>${Math.round(r.sim * 100)}% match</span></div><div class="cat">${esc(fmt(tr.id, r.earth))} here, ${esc(fmt(tr.id, r.target, 'target'))} there</div></div>`;
   const lo = tr.earthLo, hi = tr.earthHi, span = hi - lo || 1;
   const X = (v) => Math.max(0, Math.min(1, (v - lo) / span)) * 100;
@@ -558,7 +593,7 @@ function traitScale(r) {
 }
 
 function rationale(i) {
-  const rows = S.explain(D, state.target.traits, state.weights, i).filter((r) => r.w > 0);
+  const rows = rowsFor(i).filter((r) => r.w > 0);
   const strong = rows.filter((r) => r.sim >= 0.75).sort((a, b) => tell(b) - tell(a)).slice(0, 3).map((r) => r.tr.label.toLowerCase());
   const weak = rows.filter((r) => r.sim < 0.4).sort((a, b) => b.w - a.w).slice(0, 1).map((r) => r.tr.label.toLowerCase());
   const join = (a) => (a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0] || '');
@@ -573,7 +608,12 @@ function renderList() {
   let rows;
   if (isNew) {
     rows = state.cands.map((c, r) => ({ c, rank: r + 1, type: cellType(c.i) }));
-    $('#listNote').innerHTML = `The ten best-matching places on Earth that are at least 150 km from every catalogued analog site. <b>Computed, not field-validated.</b><span class="barkey">Bars: how well each aspect matches, from empty (nothing alike) to full (identical).</span>`;
+    const T2 = s2Target(), nFine = state.cands.filter((c) => c.fine).length;
+    $('#listNote').innerHTML = (state.refine
+      ? `The same ten places, re-ranked by the best <b>${S2.zoneKm} km landing zone</b> inside each 28 km cell, measured at <b>${S2.gsdM} m</b> against ${esc(shortName(state.target))}. <b>Computed, not field-validated.</b>`
+      : `The ten best-matching places on Earth that are at least 150 km from every catalogued analog site. <b>Computed, not field-validated.</b>`)
+      + (T2 && nFine ? ` <button id="btnRefine" class="refine">${state.refine ? 'Back to the 28 km ranking' : `Refine these ten at ${S2.gsdM} m`}</button>` : '') + '<span class="barkey">Bars: how well each aspect matches, from empty (nothing alike) to full (identical).</span>';
+    const br = $('#btnRefine'); if (br) br.onclick = () => { state.refine = !state.refine; if (state.detail) closeDetail(); rescore(); };
   } else {
     rows = state.known.map((k, r) => ({ k, rank: r + 1, type: TYPE_LABEL[k.k.types[0]] || k.k.types[0] }));
     const pcts = state.known.map((r) => r.pct).sort((a, b) => a - b), med = pcts[Math.floor(pcts.length / 2)] || 0;
@@ -598,8 +638,10 @@ function renderList() {
         <div class="t">${esc(p.title)}</div>
         <div class="w">${p.region ? esc(p.region) + ' · ' : ''}${latlon(r.c.lat, r.c.lon)}</div>
         <div class="why" title="${esc(rationale(r.c.i))}"><span class="ty">${esc(r.type)}</span></div>${aspectBars(r.c.i)}
-        <div class="pv">Computed candidate · ${Math.round(r.c.nearestKm).toLocaleString('en')} km from the nearest catalogued site</div></div>
-        <span class="sc">${Math.round(r.c.score)}<small>of 100</small></span>`);
+        <div class="pv">${state.refine
+          ? (r.c.fine ? `Landing zone ${latlon(r.c.fine.lat, r.c.fine.lon)} · was ${String(r.c.rank1).padStart(2, '0')} at 28 km with ${Math.round(r.c.score)}` : 'No usable 30 m zone here (water, ice shelf or no data) · kept at its 28 km score')
+          : `Computed candidate · ${Math.round(r.c.nearestKm).toLocaleString('en')} km from the nearest catalogued site`}</div></div>
+        <span class="sc">${Math.round(state.refine && r.c.score2 != null ? r.c.score2 : r.c.score)}<small>${state.refine && r.c.score2 != null ? 'at 30 m' : 'of 100'}</small></span>`);
       li.onclick = () => openDetail({ i: r.c.i, rank: r.rank });
       li.dataset.key = 'c' + r.c.i;
     } else {
@@ -645,7 +687,7 @@ function onHover(e) {
 function openDetail({ i, rank = null, site = null, fly = true, searched = null }) {
   const fresh = !state.detail;
   state.detail = { i, rank, site };
-  const t = state.target, sc = state.scores[i], p = S.placeName(D, i);
+  const t = state.target, sc = cellScore(i), refined = state.refine && !!fineOf(i), p = S.placeName(D, i);
   const la = D.lat[i], lo = D.lon[i];
   $('.main').classList.add('open'); $('#detail').hidden = false; document.body.classList.add('dopen');
   if (fresh) { $('#detail').scrollTop = 0; earth.resize(); }
@@ -655,15 +697,17 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   const tname = t.named ? shortName(t) : t.name, where = bodyName(t.body);
   $('#dKicker').textContent = site ? 'Field-validated analog' : rank ? `Computed candidate ${String(rank).padStart(2, '0')}` : searched ? `Searched: ${searched}` : 'A place you picked';
   $('#dTitle').textContent = site ? site.name : p.title;
-  $('#dSub').textContent = `${site ? p.title + ' · ' : ''}${p.region ? p.region + ' · ' : ''}${latlon(la, lo)} · ${site ? '' : cellType(i) + ' · '}28 km cell`;
+  $('#dSub').textContent = `${site ? p.title + ' · ' : ''}${p.region ? p.region + ' · ' : ''}${latlon(la, lo)} · ${site ? '' : cellType(i) + ' · '}28 km cell${refined ? `, landing zone ${latlon(fineOf(i).lat, fineOf(i).lon)}` : ''}`;
   $('#dScore').textContent = Math.round(sc);
-  $('#dScoreNote').textContent = `of 100 against ${tname} on ${where}, weighted for ${PURPOSE[state.preset] || 'custom weights'}. That is the ${topPct(sc)} of Earth's land.`;
+  $('#dScoreNote').textContent = refined
+    ? `of 100 against ${tname} on ${where}, weighted for ${PURPOSE[state.preset] || 'custom weights'}, with terrain measured at ${S2.gsdM} m in the best ${S2.zoneKm} km landing zone. It was ${Math.round(state.scores[i])} at 28 km.`
+    : `of 100 against ${tname} on ${where}, weighted for ${PURPOSE[state.preset] || 'custom weights'}. That is the ${topPct(sc)} of Earth's land.`;
   // provenance, stated plainly
   $('#dProv').innerHTML = site
     ? `<span class="tag">Field-validated</span>${esc(site.note || '')}${site.used_by ? ` Used by ${esc(site.used_by)}.` : ''} <a href="${esc(site.source)}" target="_blank" rel="noopener">Source: ${esc(host(site.source))}</a>. The score beside it is this tool's own estimate for the surrounding 28 km cell.`
     : `<span class="tag approx">Approximate</span>This match is computed from global satellite data averaged over a 28 km cell. Nobody has validated it in the field, and features smaller than the cell (single craters, lava tubes, outcrops) are not seen.`;
   $('#thTarget').textContent = tname; $('#thT2').textContent = t.body === 'moon' ? 'Moon' : 'Mars';
-  const rows = S.explain(D, t.traits, state.weights, i);
+  const rows = rowsFor(i);
   const tb = $('#dTraits'); tb.innerHTML = ''; let group = '';
   for (const r of rows) {
     if (r.tr.group !== group) { group = r.tr.group; tb.appendChild(el('tr', '', `<td class="g" colspan="4">${esc(group)}</td>`)); }
@@ -686,10 +730,48 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   $('#dHelps').innerHTML = uses.length ? uses.map((u) => `<li>${u[0].toUpperCase() + u.slice(1)}.</li>`).join('') : '<li>Weak overall match: better used as a contrast site.</li>';
   const src = D.man.sources || {};
   $('#dSources').innerHTML = `Data behind this card. Earth: terrain from AWS Terrain Tiles (SRTM, GMTED2010); temperature, wind and soil moisture from NASA POWER (MERRA-2); day-night swing from JAXA GCOM-C; rainfall from JAXA GSMaP; vegetation from MODIS NDVI (JAXA JASMES); land cover from ESA WorldCover${src.rock ? '; rock type from GLiM (Hartmann &amp; Moosdorf 2012)' : ''}. ${t.body === 'moon' ? 'Moon: LRO LOLA terrain, LRO Diviner temperature and ice, USGS Unified Geologic Map.' : 'Mars: MGS MOLA terrain, TES albedo, latitude averages for temperature and ice.'} Full list under Method &amp; sources.`;
-  drawChips(t, la, lo);
+  drawFine(i);
+  drawChips(t, la, lo, fineOf(i));
   const orb = $('#dOrbit');
   orb.ontoggle = () => { if (orb.open) drawOrbit(t, la, lo); };
   if (orb.open) drawOrbit(t, la, lo); else drawOrbitLinks(t, la, lo);
+}
+
+// The 30 m landing zone of a refined candidate: where it is, and how its terrain compares with the target's own 8 km zone.
+function drawFine(i) {
+  const box = $('#dFineBox'), T2 = s2Target(), f = fineOf(i);
+  box.hidden = !f; if (!f) return;
+  const t = state.target, tz = T2.target, tn = shortName(t), s2 = stage2Score(i, f), s1 = state.scores[i];
+  const deg = (v) => `${v.toFixed(1)}°`, m = (v) => (v < 10 ? `${v.toFixed(1)} m` : `${Math.round(v).toLocaleString('en')} m`), pc = (v) => (v < 0.001 ? '0%' : v < 0.01 ? `${(v * 100).toFixed(1)}%` : `${Math.round(v * 100)}%`);
+  const last = f.rough.length - 1;
+  const rows = [
+    ['Median slope', deg(f.p50), deg(tz.p50)],
+    ['Nine tenths of the ground is flatter than', deg(f.p90), deg(tz.p90)],
+    [`Ground steeper than ${S2.steepDeg}°`, pc(f.steep), pc(tz.steep)],
+    ['Relief inside the zone', m(f.relief), m(tz.relief)],
+    [`Roughness over ${S2.lagsM[0]} m steps`, m(f.rough[0]), m(tz.rough[0])],
+    [`Roughness over ${S2.lagsM[last]} m steps`, m(f.rough[last]), m(tz.rough[last])],
+  ];
+  const bar = (name, v) => `<tr><td>${name}</td><td colspan="2"><span class="barx wide"><i class="${v < 0.4 ? 'w' : ''}" style="width:${Math.round(v * 100)}%"></i></span><span class="lbl">${label(v)}</span></td></tr>`;
+  $('#dFine').innerHTML = `
+    <p class="finelead">The best <b>${S2.zoneKm} km</b> zone inside this cell is centred at <b>${latlon(f.lat, f.lon)}</b>. Its terrain scores <b>${Math.round(f.fine)} of 100</b> against the ${S2.zoneKm} km zone at ${esc(tn)}, both measured on a ${S2.gsdM} m grid. With the 28 km terrain traits replaced by these, the cell scores <b>${Math.round(s2)}</b> (it was ${Math.round(s1)} at 28 km).</p>
+    <canvas id="fineChart" width="520" height="150" role="img" aria-label="Share of ground flatter than each slope, this zone against the target"></canvas>
+    <p class="pfkey"><span><i class="e"></i>This zone on Earth</span><span><i class="t"></i>${esc(tn)}</span><span class="dim">Share of ground flatter than each slope</span></p>
+    <table class="traits fine"><thead><tr><th>At ${S2.gsdM} m</th><th>Earth zone</th><th>${esc(tn)}</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
+      <tr><td class="g" colspan="3">Match</td></tr>${bar('Slope distribution', f.sim[0])}${bar('Roughness at four step lengths', f.sim[1])}${bar('Relief', f.sim[2])}
+    </tbody></table>
+    <p class="small dim">${f.n} placements of the zone were tried, ${S2.stepKm} km apart. Earth: ${esc(S2.earthSource)}. Target: ${esc(T2.source)}. A 30 m grid sees slopes and landforms, not rocks.</p>`;
+  // cumulative slope curves from the stored quantiles (5, 10, 25, 50, 75, 90, 95, 99 %)
+  const c = $('#fineChart'), dpr = Math.min(2, window.devicePixelRatio || 1), W = (c.clientWidth || 520) * dpr, H = 150 * dpr;
+  c.width = W; c.height = H; const g = c.getContext('2d'), P = [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99];
+  const xmax = Math.max(10, Math.ceil(Math.max(f.q[7], tz.q[7]) / 5) * 5), L = 40 * dpr, B = 22 * dpr, R = 8 * dpr, Tp = 6 * dpr;
+  const X = (v) => L + (v / xmax) * (W - L - R), Y = (p) => H - B - p * (H - B - Tp);
+  g.font = `${10.5 * dpr}px system-ui`; g.fillStyle = 'rgba(242,238,232,.54)'; g.strokeStyle = 'rgba(242,238,232,.19)'; g.lineWidth = dpr;
+  for (const p of [0, 0.5, 1]) { g.beginPath(); g.moveTo(L, Y(p)); g.lineTo(W - R, Y(p)); g.stroke(); g.textAlign = 'right'; g.fillText(`${p * 100}%`, L - 5 * dpr, Y(p) + 3.5 * dpr); }
+  g.textAlign = 'center'; for (let v = 0; v <= xmax; v += 5) g.fillText(`${v}°`, X(v), H - 6 * dpr);
+  const line = (q, col, dash) => { g.strokeStyle = col; g.lineWidth = 2 * dpr; g.setLineDash(dash); g.beginPath(); g.moveTo(X(0), Y(0)); q.forEach((v, k) => g.lineTo(X(Math.min(v, xmax)), Y(P[k]))); g.stroke(); g.setLineDash([]); };
+  line(tz.q, '#E8D9A8', [5 * dpr, 4 * dpr]); line(f.q, '#F2EEE8', []);
 }
 
 function closeDetail() {
@@ -718,12 +800,15 @@ async function drawContext(c, t) {
   return `${spanKm.toLocaleString('en')} km across · ${src} · the square is the ${cellKm} km cell that is scored`;
 }
 
-async function drawChips(t, la, lo) {
+async function drawChips(t, la, lo, fine = null) {
   const seq = ++chipSeq;                                   // a slower, older request must never paint over a newer one
   const ct = $('#chipTarget'), ce = $('#chipEarth');
   const dpr = Math.min(2, window.devicePixelRatio || 1), sz = Math.round(ct.clientWidth * dpr) || 380;
   for (const c of [ct, ce]) { c.width = sz; c.height = sz; }
   const msg = (c, text) => { const g = c.getContext('2d'); g.fillStyle = '#060708'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = 'rgba(242,238,232,.6)'; g.font = `${13 * dpr}px system-ui`; g.textAlign = 'center'; wrapText(g, text, c.width / 2, c.height / 2, c.width * 0.8, 18 * dpr); };
+  // the landing zone, drawn at true size on both close-ups (dx east, dy north of the centre, in km)
+  const ring = (c, sizeKm, dx, dy, km) => { const g = c.getContext('2d'), W = c.width; const lw = Math.max(1.5, W / 200); for (const [col, k] of [['rgba(6,7,8,.85)', 2.6], ['#E8D9A8', 1]]) { g.strokeStyle = col; g.lineWidth = lw * k; g.beginPath(); g.arc((0.5 + dx / sizeKm) * W, (0.5 - dy / sizeKm) * W, (km / 2 / sizeKm) * W, 0, 2 * Math.PI); g.stroke(); } };
+  const zone = fine && S2 ? S2.zoneKm : 0;
   const statLine = (s) => `slope ${s.slopeMeanDeg.toFixed(1)}° · roughness ${Math.round(s.roughnessM)} m · relief ${Math.round(s.reliefM).toLocaleString('en')} m`;
   // target chip
   if (t.named && t.chip) {
@@ -732,7 +817,8 @@ async function drawChips(t, la, lo) {
       if (seq !== chipSeq) return;
       const g = gridFromInt16(buf, t.chip.px, t.chip.metersPerPixel, t.chip.sizeKm);
       renderHillshade(ct, g, { palette: 'moon', exaggeration: t.body === 'mars' ? 2 : 1.2, seaLevel: false });
-      $('#capTarget').innerHTML = `<b>${esc(shortName(t))}, ${t.body === 'moon' ? 'Moon' : 'Mars'}</b> · ${t.chip.sizeKm} km · ${t.body === 'moon' ? 'LRO LOLA 30 m' : 'MGS MOLA 463 m'}<br>${statLine(terrainStats(g, { baselineM: BASELINE_M }))}`;
+      if (zone) ring(ct, t.chip.sizeKm, 0, 0, zone);
+      $('#capTarget').innerHTML = `<b>${esc(shortName(t))}, ${t.body === 'moon' ? 'Moon' : 'Mars'}</b> · ${t.chip.sizeKm} km · ${t.chip.source || (t.body === 'moon' ? 'LRO LOLA 30 m' : 'MGS MOLA 463 m')}<br>${statLine(terrainStats(g, { baselineM: BASELINE_M }))}${zone ? `<br>Circle: the ${zone} km zone compared at 30 m` : ''}`;
     } catch { msg(ct, 'Target terrain unavailable'); }
   } else {
     try {
@@ -745,10 +831,21 @@ async function drawChips(t, la, lo) {
   abortChip = new AbortController();
   msg(ce, 'Loading Earth terrain…'); $('#capEarth').innerHTML = '<b>Earth site</b> · loading';
   try {
-    const g = await fetchEarthTerrain({ lat: la, lon: lo, sizeKm: 28, px: 512, signal: abortChip.signal });
+    const EC = S2 && S2.earthChips, key = cellKey(state.detail ? state.detail.i : S.nearestCell(D, la, lo, 0));
+    let g;
+    if (EC && EC.cells.includes(key)) {
+      // poleward of 60 degrees the live tiles are coarse GMTED2010; use the prepared GLO-30 close-up instead
+      const b = await S.fetchBytes(`data/chips/earth/${key}.bin.gz`); if (seq !== chipSeq) return;
+      const d = new Int16Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)), n = EC.px;
+      for (let r = 0; r < n; r++) for (let c = 1; c < n; c++) d[r * n + c] += d[r * n + c - 1];
+      g = gridFromInt16(d.buffer, n, (EC.sizeKm * 1000) / n, EC.sizeKm); g.zoom = null; g.src = `Copernicus GLO-30, shown at ${Math.round((EC.sizeKm * 1000) / n)} m`;
+    } else {
+      g = await fetchEarthTerrain({ lat: la, lon: lo, sizeKm: 28, px: 512, signal: abortChip.signal });
+    }
     if (seq !== chipSeq) return;
     renderHillshade(ce, g, { palette: 'moon', exaggeration: 1.2 });   // same neutral rendering on both sides, so the eye compares shape, not colour
-    $('#capEarth').innerHTML = `<b>Earth site</b> · 28 km · AWS Terrain Tiles z${g.zoom}<br>${statLine(terrainStats(g, { baselineM: BASELINE_M }))}`;
+    if (zone) ring(ce, 28, fine.dx, fine.dy, zone);
+    $('#capEarth').innerHTML = `<b>Earth site</b> · 28 km · ${g.src || `AWS Terrain Tiles z${g.zoom}`}<br>${statLine(terrainStats(g, { baselineM: BASELINE_M }))}${zone ? `<br>Circle: the best ${zone} km landing zone` : ''}`;
   } catch (e) {
     if (e.name === 'AbortError') return;
     msg(ce, e.code === 'OUT_OF_COVERAGE' ? 'Live terrain tiles stop at 85° latitude.' : 'Live terrain needs an internet connection. Scores still work offline.');
@@ -867,6 +964,7 @@ async function openAbout() {
     <li><b>Targets.</b> The nine Artemis III candidate regions and Shackleton's rim, plus 15 Mars landing, human-mission and cave sites. Or click any point on either map.</li>
     <li><b>Similarity.</b> Per trait, 1 − |Earth − target| / tolerance. When the target is beyond anything on Earth (−150 °C, a 2° noon sun), the trait ranks places toward Earth's own extreme and the card says "Earth limit". Rock type uses a published-geology lookup table (how well each Earth rock class stands in for each target rock family).</li>
     <li><b>Mission presets</b> weight traits for what the analog is <i>for</i> (Foucher et al. 2021 "functional analogues"): rover and landing tests, polar base operations, ice prospecting, instruments, crew training.</li>
+    <li><b>Stage 2, landing zones at 30 m.</b> For Jezero and the ten Moon regions, each of the ten candidates is re-measured on a 30 m grid (Copernicus GLO-30 on Earth, the Mars 2020 CTX terrain model at Jezero, LRO LOLA on the Moon). An 8 km zone, the size of the Perseverance landing ellipse, slides across the 28 km cell, and the placement whose slope distribution, roughness at 60 to 900 m steps and relief best match the target's own 8 km zone is kept. "Refine these ten" re-ranks the list with the three coarse terrain traits replaced by these.</li>
     <li><b>New candidates</b> are the best cells at least 300 km apart and more than 150 km from all 107 catalogued analog sites, so Antarctica, Atacama, Iceland and Hawaii only show up when they genuinely win.</li>
   </ol>
   <h3>The challenge's considerations, one by one</h3>
@@ -903,6 +1001,7 @@ async function openAbout() {
   <h3>Limitations</h3>
   <ul>
     <li>28 km cells: a small crater or lava tube inside a cell is invisible. Use the close-ups and field data to confirm.</li>
+    <li>Stage 2 covers Jezero and the Moon regions only, and only terrain is refined. A 30 m grid sees slopes and landforms, not rocks, and the three terrain models have different noise (GLO-30 radar, CTX stereo, LOLA laser tracks that thin out away from the pole).</li>
     <li>Moon temperature swing is approximated as 2 × (maximum − mean) from Diviner; Mars temperature, dust and wind are latitude averages, not a climate model. Moon coverage is 75–90°S.</li>
     <li>Artemis III region coordinates are approximate points inside each region.</li>
     <li>No permits, access or logistics layer.</li>
