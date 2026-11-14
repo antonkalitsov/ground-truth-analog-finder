@@ -48,24 +48,36 @@ const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } 
 const presetById = (id) => D.man.presets.find((p) => p.id === id);
 const PURPOSE = { overall: 'an all-round comparison', landing: 'rover and landing tests', polar: 'polar base operations', isru: 'ice prospecting and ISRU', instruments: 'instrument and remote-sensing tests', crew: 'crew and EVA training' };
 
+// "How to use this site": each trait, when it matches well, suggests one way the place could help prepare a mission.
+// Grouped under the four ways the challenge brief connects an analog to exploration. Suggestions, not validated claims.
+const USE_CAT = [['tech', 'Test technology'], ['ops', 'Rehearse operations'], ['res', 'Resources & habitability'], ['risk', 'Reduce risk']];
 const USE = {
-  slope: 'rover traverse, wheel slip and landing-hazard tests on comparable slopes',
-  rough: 'hazard-avoidance and landing-sensor tests on a surface just as rough',
-  relief: 'navigation, line-of-sight and communication tests among similar hills and crater walls',
-  albedo: 'camera exposure and orbital remote-sensing calibration on a surface just as bright',
-  bare: 'instrument, drill and sampling tests on bare ground without plant cover',
-  icecover: 'operations on similarly ice-free (or ice-covered) ground',
-  temp: 'cold-soak tests of batteries, seals and lubricants',
-  trange: 'thermal-cycling tests of hardware between day and night',
-  sun: 'solar-power, lighting and visual-navigation tests under a similarly low sun with long shadows',
-  ice: 'ground-penetrating radar, drilling and water-extraction (ISRU) trials in frozen ground',
-  dry: 'life-detection and contamination-control tests in near-sterile dry ground',
-  soil: 'regolith handling and excavation tests in bone-dry soil',
-  dust: 'dust-mitigation tests for seals, optics and solar panels',
-  wind: 'tests of wind-blown dust and sand transport',
-  ndvi: 'life-detection and contamination-control tests where almost nothing grows',
-  rock: 'drilling, sample-handling and spectrometer tests on the same family of rock',
+  slope: { c: 'ops', t: () => 'rover traverses and walking EVA routes on slopes like the target\'s' },
+  relief: { c: 'ops', t: () => 'navigation, line-of-sight and radio-link planning among hills and crater walls of similar height' },
+  icecover: { c: 'ops', t: () => 'year-round surface operations on similarly ice-free ground' },
+  rough: { c: 'risk', t: () => 'landing-hazard detection and wheel or footing failure tests on ground just as rough' },
+  temp: { c: 'risk', t: () => 'cold-soak tests of batteries, seals and lubricants before they fly' },
+  dust: { c: (b) => (b === 'moon' ? 'tech' : 'risk'), t: (b) => (b === 'moon' ? 'optical, laser-ranging and star-tracker tests under similarly clear, dust-free skies' : 'dust-mitigation tests for seals, optics and solar panels in similarly dusty air') },
+  wind: { c: 'risk', t: () => 'tests of how wind-blown sand and dust load hardware' },
+  albedo: { c: 'tech', t: () => 'camera exposure and orbital remote-sensing calibration on a surface just as bright' },
+  bare: { c: 'tech', t: () => 'drill, scoop and sampling-arm tests on bare ground with no plant cover' },
+  trange: { c: 'tech', t: () => 'day-night thermal-cycling tests of hardware' },
+  sun: { c: 'tech', t: () => 'solar-power, lighting and camera navigation tests under a similarly low sun with long shadows' },
+  rock: { c: 'tech', t: () => 'spectrometer and sample-handling tests on the same family of rock' },
+  ice: { c: 'res', t: (b) => `ground-penetrating radar, drilling and water-extraction (ISRU) trials in frozen ground${b === 'moon' ? ', as a stand-in for polar ice' : ''}` },
+  soil: { c: 'res', t: () => 'regolith handling and excavation trials in bone-dry soil' },
+  dry: { c: 'res', t: (b) => (b === 'moon' ? 'volatile-sampling and contamination-control protocols in near-sterile dry ground' : 'life-detection tests at the dry limit of habitability, where any signal is faint') },
+  ndvi: { c: 'res', t: (b) => (b === 'moon' ? 'contamination-control and blank-sample protocols where almost nothing grows' : 'life-detection protocol tests where almost nothing grows') },
 };
+const useCat = (id, body) => (typeof USE[id].c === 'function' ? USE[id].c(body) : USE[id].c);
+// Pick the best-matching trait for each kind of use, strongest first, at most four lines.
+function exploreUses(rows, body) {
+  const best = new Map();
+  for (const r of rows.filter((r) => r.w > 0 && r.sim >= 0.7 && USE[r.tr.id]).sort((a, b) => tell(b) - tell(a))) {
+    const c = useCat(r.tr.id, body); if (!best.has(c)) best.set(c, r);
+  }
+  return [...best.values()].slice(0, 4).map((r) => ({ r, cat: USE_CAT.find((x) => x[0] === useCat(r.tr.id, body))[1], text: USE[r.tr.id].t(body) }));
+}
 
 // ------------------------------------------------------------------ stages
 const setStage = (s) => { document.body.dataset.stage = s; };
@@ -727,8 +739,7 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   breaks.push(`<li class="muted"><b>Atmosphere</b>: ${fmt('pressure', S.earthValue(D, 'pressure', i))} of air here, ${t.body === 'moon' ? 'hard vacuum' : '0.6 kPa of CO₂'} there.</li>`);
   breaks.push(`<li class="muted"><b>Radiation</b>: ${esc(B.radiation)}, against ${esc(Eb.radiation)}.</li>`);
   $('#dBreaks').innerHTML = breaks.join('');
-  const uses = [...new Set(holds.filter((r) => USE[r.tr.id]).map((r) => USE[r.tr.id]))].slice(0, 3);
-  $('#dHelps').innerHTML = uses.length ? uses.map((u) => `<li>${u[0].toUpperCase() + u.slice(1)}.</li>`).join('') : '<li>Weak overall match: better used as a contrast site.</li>';
+  drawUses(rows, weak, B, Eb, t, where);
   const src = D.man.sources || {};
   $('#dSources').innerHTML = `Data behind this card. Earth: terrain from AWS Terrain Tiles (SRTM, GMTED2010); temperature, wind and soil moisture from NASA POWER (MERRA-2); day-night swing from JAXA GCOM-C; rainfall from JAXA GSMaP; vegetation from MODIS NDVI (JAXA JASMES); land cover from ESA WorldCover${src.rock ? '; rock type from GLiM (Hartmann &amp; Moosdorf 2012)' : ''}. ${t.body === 'moon' ? 'Moon: LRO LOLA terrain, LRO Diviner temperature and ice, USGS Unified Geologic Map.' : 'Mars: MGS MOLA terrain, TES albedo, latitude averages for temperature and ice.'} Full list under Method &amp; sources.`;
   drawFine(i);
@@ -736,6 +747,16 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   const orb = $('#dOrbit');
   orb.ontoggle = () => { if (orb.open) drawOrbit(t, la, lo); };
   if (orb.open) drawOrbit(t, la, lo); else drawOrbitLinks(t, la, lo);
+}
+
+// "How to use this site": suggested uses from the strongest traits, then one honest line on the limits.
+function drawUses(rows, weak, B, Eb, t, where) {
+  const uses = exploreUses(rows, t.body);
+  $('#dUses').innerHTML = uses.length
+    ? uses.map((u) => `<li><span class="uc">${esc(u.cat)}</span><span class="ut">${esc(u.text[0].toUpperCase() + u.text.slice(1))}.<span class="uw">${esc(u.r.tr.label)}: ${fmt(u.r.tr.id, u.r.earth)} here, ${fmt(u.r.tr.id, u.r.target, 'target')} on ${where} · ${Math.round(u.r.sim * 100)}% alike</span></span></li>`).join('')
+    : '<li><span class="uc">Contrast site</span><span class="ut">No trait matches closely enough to suggest a use. Better kept as a contrast or control site.</span></li>';
+  const w = weak.slice(0, 2).map((r) => `${r.tr.label.replace(/^\w/, (ch) => ch.toLowerCase())} (${Math.round(r.sim * 100)}% alike)`);
+  $('#dLimits').innerHTML = `<b>Limits.</b> ${w.length ? `Not a stand-in for ${w.join(' or ')}. ` : ''}Like all of Earth, it has ${(Eb.gravity / B.gravity).toFixed(1)}× the gravity, ${t.body === 'moon' ? 'air instead of vacuum' : 'about 170× the air pressure'} and a magnetic field that blocks most of the radiation found on ${where} (${esc(B.radiation.replace(/\s*\(.*\)/, '').replace(' on the surface', ''))}).`;
 }
 
 // The 30 m landing zone of a refined candidate: where it is, and how its terrain compares with the target's own 8 km zone.
