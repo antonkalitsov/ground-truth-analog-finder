@@ -1001,6 +1001,7 @@ async function openAbout() {
   <h3>Limitations</h3>
   <ul>
     <li>28 km cells: a small crater or lava tube inside a cell is invisible. Use the close-ups and field data to confirm.</li>
+    <li>Stage 2 locates, it does not detect: on its own, 30 m terrain separates known Mars analogs from non-analogs worse than 28 km terrain (AUC 0.60 against 0.75), because most plains hold a Jezero-like 8 km patch. With climate, cover and rock kept, the full score holds (Mars 0.73 to 0.68, Moon 0.74 to 0.74). Use it to choose the spot inside a candidate, not to find candidates.</li>
     <li>Stage 2 covers Jezero and the Moon regions only, and only terrain is refined. A 30 m grid sees slopes and landforms, not rocks, and the three terrain models have different noise (GLO-30 radar, CTX stereo, LOLA laser tracks that thin out away from the pole).</li>
     <li>Moon temperature swing is approximated as 2 × (maximum − mean) from Diviner; Mars temperature, dust and wind are latitude averages, not a climate model. Moon coverage is 75–90°S.</li>
     <li>Artemis III region coordinates are approximate points inside each region.</li>

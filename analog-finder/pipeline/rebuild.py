@@ -43,6 +43,7 @@ def main():
     run("07c_hires_images.py", RAW, WEB)
     run("08_findings.py", RAW, WEB, os.path.join(APP, "FINDINGS.md"))
     run("09_stage2.py", RAW, WEB)
+    run("09b_stage2_validation.py", WEB, RAW)
     print("\nRebuild finished. Start the app with start.bat (Windows) or start.sh (Mac/Linux).")
 
 

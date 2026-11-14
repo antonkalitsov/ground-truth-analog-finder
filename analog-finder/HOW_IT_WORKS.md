@@ -76,7 +76,7 @@ NASA Planetary Analog Explorer, Foucher et al. 2021, and the "Terrestrial analog
 9. `07_build_pack.py` quantizes everything into the web data pack and writes `manifest.json`.
 10. `07c_hires_images.py` makes the sharper close-ups and the 8k Earth image. `06c_moon_texture_pole.py` patches the Moon texture.
 11. `08_findings.py` runs the validation and writes `FINDINGS.md` and `findings.json`.
-12. `09_stage2.py` re-ranks the top 10 candidates at 30 m for Jezero and the ten Moon regions (see section 4b) and writes `stage2.json`. It reads everything it needs straight from public buckets, so it needs no files in `raw/` except the 10 MB Jezero terrain model it downloads itself.
+12. `09_stage2.py` re-ranks the top 10 candidates at 30 m for Jezero and the ten Moon regions (see section 4b) and writes `stage2.json`. It reads everything it needs straight from public buckets, so it needs no files in `raw/` except the 10 MB Jezero terrain model it downloads itself. `09b_stage2_validation.py` then scores the validation sites at 30 m and adds the result to `stage2.json` and FINDINGS.md.
 
 ## 4b. Stage 2: from a 28 km cell to an 8 km landing zone
 
@@ -131,6 +131,7 @@ Known analog sites are ranked against ordinary land without the search ever bein
 ## 9. Known limits
 
 - Candidates are 28 km averages. Features smaller than a cell are not seen. They are tagged "Approximate".
+- Stage 2 is a locator, not a detector: on its own, 30 m terrain separates known Mars analogs from non-analogs worse than the 28 km terrain (AUC 0.60 against 0.75), because most plains contain a Jezero-like 8 km patch. The full score holds (Mars 0.73 to 0.68, Moon 0.74 to 0.74). See FINDINGS.md.
 - Stage 2 refines terrain only, for Jezero and the Moon regions only. At 30 m it sees slopes and landforms, not rocks. GLO-30 (radar), CTX (stereo) and LOLA (laser tracks, sparser away from the pole) have different noise, which the shared 3 x 3 smoothing reduces but does not remove.
 - Mars close-ups are limited by the 463 m MOLA pixels. Earth close-ups poleward of 60 N are coarse.
 - Moon traits beyond Earth (cold, vacuum, gravity, radiation) cannot be matched anywhere on Earth. The detail card says so under "Where it breaks down".
