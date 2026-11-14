@@ -67,19 +67,22 @@ MARS_SITE_ROCK = {
     "green-valley-phoenix": "loose", "arcadia-planitia": "loose", "ares-vallis-pathfinder": "loose", "deuteronilus-mensae": "ice",
 }
 
+# Precipitation and plant greenness overlap (rank correlation 0.80 over Earth's land, 0.58 between their similarity
+# scores for a Mars or Moon target), so in every preset their weights are 0.75 of what they would be: two traits that
+# carry about 1.5 traits' worth of independent information count as 1.5.
 PRESETS = {
-    "overall":     ("Overall analog",          "Every trait counts equally (air pressure excluded: no place on Earth comes close).",
-                    dict(slope=1, rough=1, relief=1, albedo=1, bare=1, icecover=1, temp=1, trange=1, sun=1, ice=1, dry=1, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=1, rock=0.25)),
+    "overall":     ("Overall analog",          "Every trait counts equally, except precipitation and plant greenness, which overlap and count as 1.5 traits together (air pressure excluded: no place on Earth comes close).",
+                    dict(slope=1, rough=1, relief=1, albedo=1, bare=1, icecover=1, temp=1, trange=1, sun=1, ice=1, dry=0.75, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.75, rock=0.25)),
     "landing":     ("Rover & landing tests",   "Terrain that drives, lands and navigates like the target: slope, roughness, relief, bare loose ground.",
-                    dict(slope=3, rough=3, relief=2, albedo=0.5, bare=1.5, icecover=0.5, temp=0.3, trange=0.3, sun=0.3, ice=0.3, dry=0.5, soil=0.5, dust=1, wind=0.3, pressure=0, ndvi=0.5, rock=0.5)),
+                    dict(slope=3, rough=3, relief=2, albedo=0.5, bare=1.5, icecover=0.5, temp=0.3, trange=0.3, sun=0.3, ice=0.3, dry=0.375, soil=0.5, dust=1, wind=0.3, pressure=0, ndvi=0.375, rock=0.5)),
     "polar":       ("Polar base operations",   "Low sun, long shadows, cold and ice nearby: lighting, power and thermal design for a south-pole base.",
-                    dict(slope=1, rough=0.5, relief=1.5, albedo=0.5, bare=1, icecover=1, temp=2, trange=1, sun=3, ice=1.5, dry=0.5, dust=0.3, wind=0.3, pressure=0, ndvi=0.3, rock=0.5)),
+                    dict(slope=1, rough=0.5, relief=1.5, albedo=0.5, bare=1, icecover=1, temp=2, trange=1, sun=3, ice=1.5, dry=0.375, dust=0.3, wind=0.3, pressure=0, ndvi=0.225, rock=0.5)),
     "isru":        ("Ice prospecting & ISRU",  "Frozen ground under dry, bare terrain: drilling, ground-penetrating radar and water extraction trials.",
-                    dict(slope=0.5, rough=0.5, relief=0.5, albedo=0.5, bare=1.5, icecover=1, temp=2, trange=0.5, sun=0.5, ice=3, dry=1.5, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.5, rock=1)),
+                    dict(slope=0.5, rough=0.5, relief=0.5, albedo=0.5, bare=1.5, icecover=1, temp=2, trange=0.5, sun=0.5, ice=3, dry=1.125, soil=1, dust=0.3, wind=0.3, pressure=0, ndvi=0.375, rock=1)),
     "instruments": ("Instrument & remote sensing", "Surfaces that look the same to cameras and spectrometers: albedo, bare ground, no vegetation, dry air.",
-                    dict(slope=0.5, rough=1, relief=1, albedo=3, bare=3, icecover=1, temp=0.3, trange=0.3, sun=0.5, ice=0.3, dry=1.5, soil=1.5, dust=1, wind=0.3, pressure=0, ndvi=1.5, rock=2)),
+                    dict(slope=0.5, rough=1, relief=1, albedo=3, bare=3, icecover=1, temp=0.3, trange=0.3, sun=0.5, ice=0.3, dry=1.125, soil=1.5, dust=1, wind=0.3, pressure=0, ndvi=1.125, rock=2)),
     "crew":        ("Crew & EVA training",     "Places where people can rehearse surface operations: walkable slopes, harsh cold and dry conditions, isolation.",
-                    dict(slope=2, rough=2, relief=1, albedo=0.5, bare=1.5, icecover=0.5, temp=1.5, trange=1, sun=1, ice=0.5, dry=1.5, soil=1, dust=0.5, wind=1, pressure=0, ndvi=0.5, rock=0.5)),
+                    dict(slope=2, rough=2, relief=1, albedo=0.5, bare=1.5, icecover=0.5, temp=1.5, trange=1, sun=1, ice=0.5, dry=1.125, soil=1, dust=0.5, wind=1, pressure=0, ndvi=0.375, rock=0.5)),
 }
 
 BODY = {
