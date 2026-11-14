@@ -110,21 +110,15 @@
 
       <!-- The score split into points per aspect: track = points available for this purpose, blue fill = points earned.
            The rows add up to the score above, so the reader sees exactly where it was won and lost. -->
-      <h3>Where the points come from</h3>
-      <p class="pfnote">Each aspect is worth part of the 100 points, set by the purpose you chose. <b class="blue">Blue</b> is what this place earned; the empty part is what it lost. Click an aspect to see its traits.</p>
+      <h3>How alike, aspect by aspect</h3>
+      <p class="pfnote">Each spoke is one aspect. The further out the blue reaches, the more alike this place is to the target; the outer ring means identical. Hover a point for its numbers.</p>
+      <div id="dRadar" class="radarbox"></div>
+
+      <h3>How the score adds up</h3>
+      <p class="pfnote">The radar shows likeness; this shows how much each aspect counts. Each aspect is worth part of the 100 points, set by the purpose you chose. <b class="blue">Blue</b> is what this place earned; the empty part is what it lost. The full trait list is under "All traits" at the bottom.</p>
       <div id="dPoints" class="points"></div>
       <p id="dLoss" class="lossd"></p>
 
-      <h3>Trait by trait</h3>
-      <!-- Key for the trait scales below. Each scale is a small dot plot on Earth's own range, with the
-           distribution of Earth's land behind it, so the reader sees where the place and the target sit and how unusual both are. -->
-      <div class="pfkey">
-        <span><i class="e"></i>This place on Earth</span>
-        <span><i class="t"></i><span id="pfBody">Target</span></span>
-        <span><i class="z"></i>Values that earn points</span>
-      </div>
-      <p class="pfnote">Each scale runs across 98% of Earth's land (1st to 99th percentile, ends written underneath). The grey shape shows how common each value is on Earth.</p>
-      <div id="dProfile" class="profile"></div>
 
       <div id="dFineBox" hidden>
         <h3>Landing zone at 30 m</h3>

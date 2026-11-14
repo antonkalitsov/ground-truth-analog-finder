@@ -378,3 +378,26 @@ body.touring .results, body.touring .detail, body.touring .tgt { padding-bottom:
 #fineChart { width: 100%; height: 150px; display: block; margin: 12px 0 2px; }
 .traits.fine { margin-top: 12px; }
 .barx.wide { width: 120px; }
+
+/* radar: likeness per aspect. Rings at 25/50/75/100 %, the blue shape is this place; the dashed outer ring is "identical". */
+.radar { display: block; overflow: visible; }
+.radar .rg { fill: none; stroke: rgba(242,238,232,.13); stroke-width: 1; }
+.radar .rg.out { stroke: rgba(242,238,232,.38); stroke-dasharray: 3 3; }
+.radar .sp { stroke: rgba(242,238,232,.13); stroke-width: 1; }
+.radar .shape { fill: rgba(57,135,229,.38); stroke: var(--score); stroke-width: 1.5; stroke-linejoin: round; }
+.radar.big .shape { stroke-width: 2; }
+.radar .vx { fill: var(--score-lt); stroke: var(--bg); stroke-width: 2; }
+.radar .rl { fill: var(--faint); font: 400 10px var(--sans); }
+.radar .al { fill: var(--ink); font: 500 12.5px var(--sans); }
+.radar .av { fill: var(--dim); font: 400 11.5px var(--sans); font-variant-numeric: tabular-nums; }
+.radarbox { display: flex; justify-content: center; margin: 4px 0 8px; }
+.radarbox .radar { width: 100%; max-width: 380px; height: auto; }
+.item .sc .radar { margin: 8px 0 0 auto; }
+.listnote .barkey { display: flex; flex-direction: column; gap: 2px; }
+.rkey .radar { width: 270px; max-width: 100%; height: auto; margin: 0 auto; }
+.rkey .radar .al { font-size: 13px; } .rkey .radar .rl { display: none; }
+@media (max-width: 860px) { .listnote .barkey { flex-direction: column; align-items: flex-start; } }
+
+.pfkey i.ov { width: 14px; height: 8px; background: rgba(57,135,229,.45); }
+.pdfh { font-size: 13px; font-weight: 500; margin: 6px 0 4px; }
+#fineChart { width: 100%; height: 190px; display: block; }
