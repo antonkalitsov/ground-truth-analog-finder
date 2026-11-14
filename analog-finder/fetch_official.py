@@ -175,4 +175,4 @@ if __name__ == "__main__":
         except Exception as e: print("  GLiM failed:", type(e).__name__, e); summary["glim"] = f"failed: {e}"
     with open(os.path.join(OUT, "summary.json"), "w") as f: json.dump(summary, f, indent=1)
     print("\nSUMMARY"); print(json.dumps(summary, indent=1))
-    print("\nDone. Tell Claude it finished (paste the SUMMARY if anything failed).")
+    print("\nDone.")
