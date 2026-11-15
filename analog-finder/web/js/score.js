@@ -90,7 +90,8 @@ export async function loadData(base = 'data/') {
   for (let i = 0; i < cells; i++) {
     sunQ[i] = sunRow[row[i]];
     const temp = deq(T.temp, layer.temp[i]);
-    iceQ[i] = quant(T.ice, Math.min(1, Math.max(0, (1 - temp) / 7)));
+    // ground ice counts only on the ice-free share of the cell: a glacier or ice sheet is not frozen ground
+    iceQ[i] = quant(T.ice, Math.min(1, Math.max(0, (1 - temp) / 7)) * (1 - Math.min(1, Math.max(0, deq(T.icecover, layer.icecover[i])))));
     presQ[i] = quant(T.pressure, 101.325 * Math.pow(1 - 2.25577e-5 * Math.min(9000, Math.max(-500, elev(elevQ[i]))), 5.25588));
   }
   layer.sun = sunQ; layer.ice = iceQ; layer.pressure = presQ;

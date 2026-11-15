@@ -127,8 +127,11 @@ MARS_SITE_MEASURED = {
               "https://doi.org/10.1029/2024JE008385"]),
 }
 
-def earth_ice(temp):
-    return np.clip((1.0 - temp) / 7.0, 0, 1)
+def earth_ice(temp, icecover=0.0):
+    """Ground-ice (permafrost) likelihood from mean annual air temperature: certain below -6 C, none above +1 C.
+    It counts only on the share of a cell that is ground: an ice sheet or glacier is not frozen ground, and without
+    this a 2 km thick ice sheet scored as a perfect match for ice-bearing lunar regolith."""
+    return np.clip((1.0 - temp) / 7.0, 0, 1) * (1.0 - np.clip(icecover, 0, 1))
 
 def mars_model(lat, elev, albedo, slope, rough, relief, ice_flag=None, rock=None):
     a = np.abs(np.asarray(lat, dtype=np.float64))

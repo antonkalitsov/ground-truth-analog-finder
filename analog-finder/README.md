@@ -105,10 +105,10 @@ Nothing was tuned on known sites. Each Earth cell takes its best score over all 
 
 | Body | Environment analogs vs clear non-analogs (AUC) | Geology-only analogs vs non-analogs (AUC) | 107 catalogued sites: median percentile |
 |---|---|---|---|
-| Mars | 0.75 | 0.60 | 74th |
-| Moon | 0.82 | 0.70 | 68th |
+| Mars | 0.74 | 0.56 | 73rd |
+| Moon | 0.74 | 0.68 | 70th |
 
-Every official dataset was checked against this validation. JAXA Diviner, GCOM-C, GSMaP and NDVI layers raised it (Moon 0.75 to 0.82). JAXA AMSR2 soil moisture lowered it and was dropped (its retrieval reads high over sand seas and fails under forest). The GLiM rock map at 0.5° mostly sees sedimentary cover, so rock type carries a small weight in the Overall preset and full weight in the Instruments and ISRU presets. See [FINDINGS.md](FINDINGS.md) for the step-by-step table and per-target candidates.
+Every official dataset was checked against this validation. JAXA Diviner, GCOM-C, GSMaP and NDVI layers raised it (Moon 0.75 to 0.82 when they were added; the later overlap weighting and the ground-ice rule brought it to 0.74). JAXA AMSR2 soil moisture lowered it and was dropped (its retrieval reads high over sand seas and fails under forest). The GLiM rock map at 0.5° mostly sees sedimentary cover, so rock type carries a small weight in the Overall preset and full weight in the Instruments and ISRU presets. See [FINDINGS.md](FINDINGS.md) for the step-by-step table and per-target candidates.
 
 ## Headline findings
 
@@ -122,6 +122,7 @@ Every official dataset was checked against this validation. JAXA Diviner, GCOM-C
 * 28 km cells: small craters, lava tubes and outcrops are invisible at this scale; use the live terrain close-up and field data to confirm.
 * Moon temperature and ice come from LRO Diviner; the Moon day-night swing is approximated as 2 × (maximum − mean). Mars thermal, ice, dust and wind traits are published averages by latitude, not climate-model output. Moon coverage is 75–90°S.
 * Artemis III region coordinates are approximate points inside each region (NASA has not published centres).
+* Ground ice on Earth is a permafrost likelihood from air temperature, counted only on ice-free ground, so ice sheets are not offered as analogs for ice-bearing lunar regolith. All of Antarctica is mapped as ice, so ice-free oases such as the McMurdo Dry Valleys are missed. Dust, soil moisture, day-night swing and sun angle are loose analogies off Earth; see "Traits that mean something different off Earth" in [HOW_IT_WORKS.md](HOW_IT_WORKS.md).
 * Rock type is a first-level class (basalt, granite, sandstone and so on), not mineralogy; no accessibility, permits or logistics layer.
 * Not yet scored: radar roughness (CSA RADARSAT, Sentinel-1, ALOS-2 vs LRO Mini-RF) and neutron hydrogen (LRO LEND). These are the next traits.
 

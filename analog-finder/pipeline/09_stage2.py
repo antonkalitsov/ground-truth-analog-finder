@@ -151,7 +151,7 @@ class Pack:
         deq = lambda tr, b: tr["min"] + (b / 255.0) * (tr["max"] - tr["min"])
         quant = lambda tr, v: np.clip(np.floor((self.toT(tr, v) - tr["min"]) / (tr["max"] - tr["min"]) * 255 + 0.5), 0, 255).astype(np.uint8)
         temp = deq(self.T["temp"], self.layer["temp"].astype(np.float64))
-        self.layer["ice"] = quant(self.T["ice"], np.clip((1 - temp) / 7, 0, 1))
+        self.layer["ice"] = quant(self.T["ice"], np.clip((1 - temp) / 7, 0, 1) * (1 - np.clip(deq(self.T["icecover"], self.layer["icecover"]), 0, 1)))
         self.layer["sun"] = quant(self.T["sun"], np.array([self.noon_sun(la, man["bodies"]["earth"]["obliquity"]) for la in 90 - (np.arange(ny) + 0.5) * g["res"]]))[self.p // nx]
         self.n = n
 

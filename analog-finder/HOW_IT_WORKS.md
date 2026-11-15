@@ -119,7 +119,7 @@ Images in `web/assets/`: `earth.jpg` (4k) and `earth_8k.jpg` (8k, loaded after t
 
 ## 7. Validation
 
-Known analog sites are ranked against ordinary land without the search ever being told where they are. Area under the curve (0.5 is chance): environment traits Mars 0.75, Moon 0.82; geology alone Mars 0.60, Moon 0.70. Details and an ablation table are in `FINDINGS.md`.
+Known analog sites are ranked against ordinary land without the search ever being told where they are. Area under the curve (0.5 is chance): environment traits Mars 0.74, Moon 0.74; geology alone Mars 0.56, Moon 0.68 (the Moon figure rests on 5 environment analogs, so one site moves it by 0.03). Details and an ablation table are in `FINDINGS.md`.
 
 ## 8. Where everything is stored
 
@@ -135,3 +135,17 @@ Known analog sites are ranked against ordinary land without the search ever bein
 - Stage 2 refines terrain only, for Jezero and the Moon regions only. At 30 m it sees slopes and landforms, not rocks. GLO-30 (radar), CTX (stereo) and LOLA (laser tracks, sparser away from the pole) have different noise, which the shared 3 x 3 smoothing reduces but does not remove.
 - Mars close-ups are limited by the 463 m MOLA pixels. Earth close-ups poleward of 60 N are coarse.
 - Moon traits beyond Earth (cold, vacuum, gravity, radiation) cannot be matched anywhere on Earth. The detail card says so under "Where it breaks down".
+
+### Traits that mean something different off Earth
+
+Each trait is compared as a number, but the number does not always mean the same thing on the Moon or Mars. An audit on 15 November 2026 found these cases.
+
+- **Ground ice (fixed).** On Earth the trait is a permafrost likelihood from mean air temperature. A 2 km ice sheet therefore counted as perfect "ground ice" and, with its cold and low sun, led the Moon lists: 62 % of Earth's top 1 % for Polar base operations were ice-sheet cells, and 44 of the 100 top-10 places over the ten Moon targets. Lunar ice is the opposite: a few percent of ice mixed into dry regolith inside permanently shadowed craters. Ground ice now counts only on the ice-free share of a cell (`traits.earth_ice`), which leaves 8 of 100. The trait still means "cold enough for ice to persist in the ground", for the Moon too (LRO Diviner ice stability), not "how much ice there is".
+- **Antarctica is all ice in this data.** ESA WorldCover does not cover Antarctica and the Natural Earth glacier outline marks every one of its 68,880 cells as 100 % ice. Ice-free ground there, such as the McMurdo Dry Valleys, a classic Mars and lunar analog, is invisible: Wright Valley sits in the 15th percentile for Jezero. A rock outcrop map (for example the SCAR Antarctic Digital Database) is the fix.
+- **Dust.** The Moon target is 0 (no air to carry dust), which rewards clean Earth air although lunar dust is one of the main surface hazards. The Mars target is an optical depth near 0.5, which rewards hazy Earth air of any kind, so the clear-skied Atacama scores 0 on dust. The weight is small except in Rover and landing tests.
+- **Soil moisture.** MERRA-2 wetness reads 1.0 on ice and 0.5 to 0.9 in frozen High Arctic ground, so frozen ground counts as wet and unlike the target, even for ice prospecting where frozen pore water is the point.
+- **Temperature is used twice.** Ground ice is derived from temperature, so in Ice prospecting one variable carries a third of the weight. For ice-free Mars targets such as Jezero the two cancel (a cold place gains on temperature and loses on ground ice), which is why hot deserts lead those lists.
+- **Day-night swing.** The Moon value is the surface swing over a 29.5 day lunar day (and near the pole it is driven by terrain shadow as much as by the day); Earth's is a satellite surface swing over 24 hours. Earth cannot come close, so the trait only ranks places toward Earth's largest swings.
+- **Albedo and land cover disagree in the Arctic.** Albedo is a yearly mean that includes the snow season; land cover is a snow-free summer view. A High Arctic polar desert reads "barren, 0 % ice" with an albedo of 0.6, so every polar candidate scores 0 on albedo against the Moon's 0.15.
+- **Sun angle** comes from latitude only. It does not include polar night, terrain shadow or the near-continuous light on lunar polar ridges, and Mars receives 43 % of Earth's sunlight at the same angle.
+- **Wind.** Mars wind speed is compared directly although Mars air is about 1 % as dense, so the same speed pushes about 1 % as hard.

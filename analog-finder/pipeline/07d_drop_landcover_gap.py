@@ -45,7 +45,7 @@ open(os.path.join(D, "names.bin.gz"), "wb").write(gzip.compress(np.ascontiguousa
 earth_t = {t: T.dequant_t(t, layers[STORED.index(t)]) for t in STORED}
 elev_d = EL["min"] + qelev / 255 * (EL["max"] - EL["min"])
 earth_t["pressure"] = T.to_t("pressure", T.earth_pressure(elev_d))
-earth_t["ice"] = T.to_t("ice", T.earth_ice(T.dequant_t("temp", layers[STORED.index("temp")])))
+earth_t["ice"] = T.to_t("ice", T.earth_ice(T.dequant_t("temp", layers[STORED.index("temp")]), T.dequant_t("icecover", layers[STORED.index("icecover")])))
 earth_t["sun"] = T.to_t("sun", mean_noon_sun_elevation(90 - (idx // NX + 0.5) * 0.25, 23.44))
 for tr in man["traits"]:
     t = tr["id"]

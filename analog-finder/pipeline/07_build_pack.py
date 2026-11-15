@@ -17,7 +17,7 @@ ok = E["ok"]; NY, NX = ok.shape
 lat_c, lon_c = E["lat"], E["lon"]
 LAT = np.repeat(lat_c[:, None], NX, 1)
 earth = dict(slope=E["slope"], rough=E["rough"], relief=E["relief"], albedo=E["albedo"], bare=E["bare"],
-             icecover=E["snow"], temp=E["temp"], trange=E["trange"], sun=E["sun"], ice=T.earth_ice(E["temp"]),
+             icecover=E["snow"], temp=E["temp"], trange=E["trange"], sun=E["sun"], ice=T.earth_ice(E["temp"], E["snow"]),
              dry=E["precip"], soil=E["wet"], dust=E["dust"], wind=E["wind"], pressure=T.earth_pressure(E["elev"]))
 SOURCES = {}
 # official challenge datasets (JAXA G-Portal / EORC / JASMES via the JAXA Earth API, GLiM), built by 05b_official_earth.py
@@ -53,7 +53,7 @@ earth_t = {t: deq_all(t) for t in TIDS}
 elev_d = ELEV[1] + qelev / 255 * (ELEV[2] - ELEV[1])
 temp_d = T.dequant_t("temp", layers[STORED.index("temp")])
 earth_t["pressure"] = T.to_t("pressure", T.earth_pressure(elev_d))
-earth_t["ice"] = T.to_t("ice", T.earth_ice(temp_d))
+earth_t["ice"] = T.to_t("ice", T.earth_ice(temp_d, T.dequant_t("icecover", layers[STORED.index("icecover")])))
 earth_t["sun"] = T.to_t("sun", earth["sun"].ravel()[idx])
 lo = {t: float(np.percentile(earth_t[t], 1)) for t in TIDS}
 hi = {t: float(np.percentile(earth_t[t], 99)) for t in TIDS}

@@ -99,8 +99,9 @@ arctic_gap = nowc & (lat_c[:, None] > 0)
 
 # ---------------------------------------------------------------- illumination and ground ice
 sun = np.repeat(mean_noon_sun_elevation(lat_c, 23.44)[:, None], NX, 1).astype(np.float32)
-# ground-ice (permafrost) likelihood from mean annual air temperature: continuous below -6 C, none above +1 C
-ice = np.clip((1.0 - temp) / 7.0, 0, 1).astype(np.float32)
+# ground-ice (permafrost) likelihood from mean annual air temperature: continuous below -6 C, none above +1 C,
+# counted only on the ice-free share of the cell (a glacier is not frozen ground)
+ice = (np.clip((1.0 - temp) / 7.0, 0, 1) * (1 - np.clip(snow, 0, 1))).astype(np.float32)
 
 ok = (landfrac >= 0.3) & ~np.isnan(t["slope"]) & ~arctic_gap
 print("left out, no land cover north of WorldCover:", int(((landfrac >= 0.3) & arctic_gap).sum()), flush=True)
