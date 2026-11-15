@@ -52,6 +52,7 @@ Approximations to keep in mind:
 
 - **Cell size.** Earth is scored on 0.25 degree cells (about 28 km). Values are cell averages, so single craters, lava tubes and outcrops are not seen. Mars targets are read from a 1 degree grid, the Moon from 4 km cells.
 - **Coordinates** of catalogued sites and of Moon and Mars targets are approximate (a named region reduced to one point).
+- **No land north of 82.75 N.** ESA WorldCover (and Sentinel-2) stop there, so the northern tips of Greenland and Ellesmere Island (315 cells) have no measured ice or ground cover and are left out of the search rather than filled from coarse glacier outlines.
 - **Place names** of candidates are the nearest Natural Earth administrative or geographic region, not surveyed locality names.
 - **Analog type** of a candidate (polar desert, volcanic plain and so on) is a rule on its trait values, not a geological survey.
 - **Sunlight** on Earth is derived from latitude (noon sun elevation), not from terrain shadowing.
