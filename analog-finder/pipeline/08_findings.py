@@ -54,7 +54,7 @@ def auc(pos, neg):
 
 W = {p["id"]: p["weights"] for p in man["presets"]}
 tg = {t["id"]: t for t in man["targets"]}
-lines = ["# Ground Truth: findings", "",
+lines = ["# Terra Twin: findings", "",
          "Every land cell on Earth (318,332 cells of 0.25 degrees, about 28 km) was scored against each Moon and Mars target.",
          "Scores are 0 to 100: the weighted mean of per-trait similarities. 'New' means more than 150 km from all 107 catalogued analog sites.", ""]
 

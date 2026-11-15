@@ -1,4 +1,4 @@
-// score.js — data loading and the scoring engine for Ground Truth.
+// score.js — data loading and the scoring engine for Terra Twin.
 // Same rule as pipeline/traits.py (blend_sim), per trait:
 //   closeness  C = 1 - |earth - target| / tolerance                                       (clipped 0..1)
 //   extremity  X = 1 - 2F, F = share of Earth's land more extreme toward the target       (clipped 0..1)

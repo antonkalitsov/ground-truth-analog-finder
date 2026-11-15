@@ -1,4 +1,4 @@
-// terrain.js — runtime "terrain detail" for Ground Truth. Zero dependencies, plain ES module.
+// terrain.js — runtime "terrain detail" for Terra Twin. Zero dependencies, plain ES module.
 //
 // Fetches open elevation tiles (AWS Terrain Tiles, "terrarium" PNG encoding) for any Earth
 // location, resamples them onto a local equal-distance grid, computes terrain statistics and

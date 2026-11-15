@@ -1,8 +1,8 @@
-# Ground Truth: how it works, where the data comes from and where it lives
+# Terra Twin: how it works, where the data comes from and where it lives
 
 ## 1. The idea in one paragraph
 
-Pick a place on the Moon (south pole, Artemis III regions) or on Mars. Ground Truth describes that place with 17 numbers (its traits), describes every land cell of the Earth with the same 17 numbers, and scores how close each Earth cell is to the target. The best-scoring cells that are far from all known analog sites are shown as "new candidates". Everything is computed in the browser from a small pre-built data pack.
+Pick a place on the Moon (south pole, Artemis III regions) or on Mars. Terra Twin describes that place with 17 numbers (its traits), describes every land cell of the Earth with the same 17 numbers, and scores how close each Earth cell is to the target. The best-scoring cells that are far from all known analog sites are shown as "new candidates". Everything is computed in the browser from a small pre-built data pack.
 
 ## 2. Two halves
 

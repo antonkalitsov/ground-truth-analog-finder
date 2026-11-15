@@ -1,5 +1,5 @@
 """Earth layers from the official challenge resources (JAXA G-Portal / EORC / JASMES products via the JAXA Earth API,
-fetched by fetch_official.py) and the GLiM global lithological map, regridded to Ground Truth's 0.25 degree grid.
+fetched by fetch_official.py) and the GLiM global lithological map, regridded to Terra Twin's 0.25 degree grid.
 
   trange  <- GCOM-C SGLI land surface temperature, day minus night, mean of the 12 months of 2023 (surface, not air:
              the right quantity to compare with the regolith temperature swing on the Moon and Mars).

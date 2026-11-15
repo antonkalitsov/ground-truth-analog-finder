@@ -1,4 +1,4 @@
-// globe.js — zero-dependency WebGL globe for Ground Truth.
+// globe.js — zero-dependency WebGL globe for Terra Twin.
 //
 // The planet is not a mesh: one full-screen triangle is drawn and every pixel is
 // ray-cast against a unit sphere in the fragment shader. That gives an exact,

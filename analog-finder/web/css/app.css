@@ -1,4 +1,4 @@
-/* Ground Truth. One palette: near-black canvas, warm off-white ink, one pale-yellow accent, terracotta for "does not match".
+/* Terra Twin. One palette: near-black canvas, warm off-white ink, one pale-yellow accent, terracotta for "does not match".
    Two typefaces: Newsreader (display, self-hosted variable font) and the system sans (UI and body, zero bytes).
    Motion uses transform and opacity only, so nothing animates layout. */
 @font-face { font-family: "Newsreader"; src: url("../fonts/newsreader-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-style: normal; font-display: swap; }
@@ -59,6 +59,7 @@ body:not([data-stage="intro"]) .mask > span { transform: none; animation: none; 
 body:not([data-stage="intro"]) .mask::after { display: none; }
 body:not([data-stage="intro"]) :is(.mark-coord, .mark-sub, .mark-rule) { animation: none; opacity: 0; transition: opacity .35s ease-out; }
 body.instant .mark { transition: none; }
+body.instant .app { transition: none; }   /* tour replays the title on a clean canvas, not over the fading instrument */
 
 /* ------------------------------------------------------------------ star field (static canvas behind every stage) */
 .stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 1.4s ease-out; }
@@ -411,8 +412,6 @@ body[data-stage="choose"] .choose.settled .planet.tourhover .disc { transform: s
 .radarbox .radar { width: 100%; max-width: 380px; height: auto; }
 .item .sc .radar { margin: 8px 0 0 auto; }
 .listnote .barkey { display: flex; flex-direction: column; gap: 2px; }
-.rkey .radar { width: 270px; max-width: 100%; height: auto; margin: 0 auto; }
-.rkey .radar .al { font-size: 13px; } .rkey .radar .rl { display: none; }
 @media (max-width: 860px) { .listnote .barkey { flex-direction: column; align-items: flex-start; } }
 
 .pfkey i.ov { width: 14px; height: 8px; background: rgba(57,135,229,.45); }
