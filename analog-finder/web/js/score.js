@@ -10,7 +10,7 @@
 const DEG = Math.PI / 180;
 
 export async function fetchBytes(url) {
-  const r = await fetch(url);
+  const r = await fetch(url, { cache: 'no-cache' });   // always revalidate: the data files must come from the same build
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
   const buf = new Uint8Array(await r.arrayBuffer());
   if (buf[0] === 0x1f && buf[1] === 0x8b && 'DecompressionStream' in window) {
@@ -58,10 +58,10 @@ export function similarity(tr, e, tv) {
 export const beyondEarth = (tr, tv) => tv < tr.earthLo || tv > tr.earthHi;
 
 export async function loadData(base = 'data/') {
-  const man = await (await fetch(base + 'manifest.json')).json();
+  const man = await (await fetch(base + 'manifest.json', { cache: 'no-cache' })).json();
   const [earth, names, namesTxt, mars, moon] = await Promise.all([
     fetchBytes(base + 'earth.bin.gz'), fetchBytes(base + 'names.bin.gz'),
-    fetch(base + 'names.json').then((r) => r.json()),
+    fetch(base + 'names.json', { cache: 'no-cache' }).then((r) => r.json()),
     fetchBytes(base + 'mars_grid.bin.gz'), fetchBytes(base + 'moon_grid.bin.gz'),
   ]);
   const { nx, ny, cells, stored } = man.grid;
@@ -95,6 +95,7 @@ export async function loadData(base = 'data/') {
   }
   layer.sun = sunQ; layer.ice = iceQ; layer.pressure = presQ;
   const nm = new Uint16Array(names.buffer, names.byteOffset, names.byteLength / 2);
+  if (nm.length !== 3 * cells || earth.length !== maskBytes + (stored.length + 1) * cells) throw new Error('Data files are from different builds. Reload with Ctrl+F5.');
   return {
     man, T, cells, nx, ny, cellOf, lat, lon, layer, elevQ, elev,
     names: namesTxt, nameIdx: nm,

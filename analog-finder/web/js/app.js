@@ -23,7 +23,7 @@ window.__af = { state, get D() { return D; } };
 const dataP = S.loadData('data/');
 dataP.catch(() => {});
 // Stage 2 (30 m landing zones for the named fine targets) is optional: without the file the app works as before.
-const s2P = fetch('data/stage2.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+const s2P = fetch('data/stage2.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 
 // ------------------------------------------------------------------ formatting
 const UNITS = {
