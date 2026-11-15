@@ -309,6 +309,7 @@ function setTarget(t) {
   if (t.named) bits.push(`${t.blurb || ''}`);
   else bits.push(t.blurb || '');
   if (t.rock) bits.push(`Rock: ${FAMILY_SHORT[t.rock] || t.rock}${t.geoUnit ? ` (USGS unit ${t.geoUnit.code}, ${t.geoUnit.age})` : ''}.`);
+  if (t.measured) bits.push(`Weather measured on site: ${t.measured.label}.`);
   if (t.diviner) bits.push(`LRO Diviner: ${Math.round(t.diviner.tavgK)} K mean, ${Math.round(t.diviner.tmaxK)} K maximum.`);
   if (t.coord_confidence === 'approximate') bits.push('Coordinates approximate.');
   $('#qNote').innerHTML = esc(bits.filter(Boolean).join(' ')) + (t.source ? ` <a href="${esc(t.source)}" target="_blank" rel="noopener">Source: ${esc(host(t.source))}</a>` : '');
@@ -741,7 +742,7 @@ function openDetail({ i, rank = null, site = null, fly = true, searched = null }
   $('#dBreaks').innerHTML = breaks.join('');
   drawUses(rows, weak, B, Eb, t, where);
   const src = D.man.sources || {};
-  $('#dSources').innerHTML = `Data behind this card. Earth: terrain from AWS Terrain Tiles (SRTM, GMTED2010); temperature, wind and soil moisture from NASA POWER (MERRA-2); day-night swing from JAXA GCOM-C; rainfall from JAXA GSMaP; vegetation from MODIS NDVI (JAXA JASMES); land cover from ESA WorldCover${src.rock ? '; rock type from GLiM (Hartmann &amp; Moosdorf 2012)' : ''}. ${t.body === 'moon' ? 'Moon: LRO LOLA terrain, LRO Diviner temperature and ice, USGS Unified Geologic Map.' : 'Mars: MGS MOLA terrain, TES albedo, latitude averages for temperature and ice.'} Full list under Method &amp; sources.`;
+  $('#dSources').innerHTML = `Data behind this card. Earth: terrain from AWS Terrain Tiles (SRTM, GMTED2010); temperature, wind and soil moisture from NASA POWER (MERRA-2); day-night swing from JAXA GCOM-C; rainfall from JAXA GSMaP; vegetation from MODIS NDVI (JAXA JASMES); land cover from ESA WorldCover${src.rock ? '; rock type from GLiM (Hartmann &amp; Moosdorf 2012)' : ''}. ${t.body === 'moon' ? 'Moon: LRO LOLA terrain, LRO Diviner temperature and ice, USGS Unified Geologic Map.' : (t.measured ? `Mars: MGS MOLA terrain, TES albedo; temperature, day-night swing, pressure, dust and wind from the ${t.measured.label}.` : 'Mars: MGS MOLA terrain, TES albedo, latitude averages for temperature and ice.')} Full list under Method &amp; sources.`;
   drawFine(i);
   drawChips(t, la, lo, fineOf(i));
   const orb = $('#dOrbit');

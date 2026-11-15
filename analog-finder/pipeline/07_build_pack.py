@@ -133,6 +133,9 @@ for t in targets:
         a = float(alb_grid[min(179, int(90 - t["lat"])), min(359, int(t["lon"] + 180))])
         rk = T.MARS_SITE_ROCK.get(t["id"], "basalt"); t["rock"] = rk
         v = T.mars_model(np.array(t["lat"]), np.array(s["elev"]), np.array(a), s["slope"], s["rough"], s["relief"], ice_flag=np.array(t["ice"]), rock=np.array(T.FAMILY.index(rk)))
+        if t["id"] in T.MARS_SITE_MEASURED:                     # lander measurements replace the latitude model
+            ms = T.MARS_SITE_MEASURED[t["id"]]; v.update({k: np.array(x) for k, x in ms["values"].items()})
+            t["measured"] = dict(label=ms["label"], traits=sorted(ms["values"]), refs=ms["refs"])
         # chip from the native 463 m DEM
         with rasterio.open(os.path.join(raw, "mars_mola_463m.tif")) as d:
             px_m = 463.0836
