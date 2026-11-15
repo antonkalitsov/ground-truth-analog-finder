@@ -59,6 +59,7 @@ body:not([data-stage="intro"]) .mask > span { transform: none; animation: none; 
 body:not([data-stage="intro"]) .mask::after { display: none; }
 body:not([data-stage="intro"]) :is(.mark-coord, .mark-sub, .mark-rule) { animation: none; opacity: 0; transition: opacity .35s ease-out; }
 body.instant .mark { transition: none; }
+body.instant .app { transition: none; }   /* tour replays the title on a clean canvas, not over the fading instrument */
 
 /* ------------------------------------------------------------------ star field (static canvas behind every stage) */
 .stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 1.4s ease-out; }
