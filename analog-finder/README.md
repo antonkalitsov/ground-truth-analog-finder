@@ -1,4 +1,4 @@
-# Ground Truth
+# Terra Twin
 
 **A global search of Earth's land for new analogs of Artemis III Moon base regions and Mars sites.**
 
@@ -6,7 +6,7 @@ Built for the NASA Space Apps Challenge 2026, challenge *"Identify Earth Locatio
 
 It is built on the official challenge resources: **NASA LRO (LOLA, LROC, Diviner) and PDS, NASA Earthdata / Worldview (GIBS), JAXA G-Portal products (GCOM-C, GSMaP, MODIS NDVI via the JAXA Earth API), ESA Copernicus (WorldCover, Sentinel-2) and links to CSA RADARSAT**, plus USGS Astrogeology maps.
 
-Analog sites are usually picked by experience: Atacama, Antarctica, Iceland, Hawaii. Ground Truth instead scores **every land cell on Earth** (318,332 cells of 0.25°, about 28 km) against a chosen place on the Moon or Mars, ranks the best matches, flags the ones that are **far from every catalogued analog site**, and explains for each one where the analogy holds, where it breaks down and how it can help exploration.
+Analog sites are usually picked by experience: Atacama, Antarctica, Iceland, Hawaii. Terra Twin instead scores **every land cell on Earth** (318,332 cells of 0.25°, about 28 km) against a chosen place on the Moon or Mars, ranks the best matches, flags the ones that are **far from every catalogued analog site**, and explains for each one where the analogy holds, where it breaks down and how it can help exploration.
 
 ## Run it
 

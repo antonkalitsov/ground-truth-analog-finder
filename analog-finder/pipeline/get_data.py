@@ -28,7 +28,7 @@ def download(url, path):
         print("  have", os.path.relpath(path, raw)); return
     os.makedirs(os.path.dirname(path), exist_ok=True)
     print("  get ", os.path.relpath(path, raw), "<-", url, flush=True)
-    req = urllib.request.Request(url, headers={"User-Agent": "ground-truth-pipeline"})
+    req = urllib.request.Request(url, headers={"User-Agent": "terra-twin-pipeline"})
     with urllib.request.urlopen(req, timeout=120) as r, open(path + ".part", "wb") as f:
         total = int(r.headers.get("Content-Length") or 0); done = 0; step = 1 << 20
         while chunk := r.read(step):

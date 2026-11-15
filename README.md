@@ -1,6 +1,6 @@
-# Ground Truth: Earth analog finder
+# Terra Twin: Earth analog finder
 
-Ground Truth is our NASA Space Apps Challenge 2026 project for the challenge "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars".
+Terra Twin is our NASA Space Apps Challenge 2026 project for the challenge "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars".
 
 It scores every land cell on Earth (318,332 cells of 0.25 degrees, about 28 km) against a chosen place on the Moon or Mars. It ranks the best matches and flags new candidates that are far from every catalogued analog site. For each match it explains where the analogy holds, where it breaks down and how the site could help exploration. The data comes from NASA (LRO, MGS, POWER, Blue Marble), JAXA (GCOM-C, GSMaP, JASMES), ESA (WorldCover), USGS Astrogeology and Natural Earth.
 

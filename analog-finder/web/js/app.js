@@ -1,4 +1,4 @@
-// app.js — Ground Truth interface.
+// app.js — Terra Twin interface.
 // Three stages share one page and one state object: intro (title card) -> choose (Moon / Mars) -> app.
 // The scoring engine (score.js), the Earth globe (globe.js) and the terrain close-ups (terrain.js) are unchanged.
 import * as S from './score.js';
@@ -614,8 +614,8 @@ function drawPoints(as, total) {
     `<div class="prow tot"><span class="pn">Total</span><span></span><span class="pv"><b>${Math.round(total)}</b> of 100</span></div>`;
   $('#dLoss').textContent = lossLine(as);
 }
-// How to read the small radar on every row, shown once above the list with its spokes named.
-const BAR_KEY = () => `<span class="barkey"><span class="rkey">${radarSVG(aspects(rowsFor(state.cands[0] ? state.cands[0].i : 0)), { size: 270, labels: true, demo: true })}</span><span>The shape beside each score shows how alike the place is to the target, aspect by aspect. Each spoke is one aspect, always in this order. The further out the blue reaches, the more alike; the outer ring means identical. A fuller shape is a closer analog. Treat scores a point or two apart as ties.</span></span>`;
+// How to read the small radar on every row: one line above the list naming its spokes (no large key chart).
+const BAR_KEY = () => `<span class="barkey">The small shape beside each score shows how alike the place is to the target, aspect by aspect. Its spokes, clockwise from the top: ${RADAR_ORDER.map(aspectName).join(', ')}. The further out the blue reaches, the more alike; the outer ring means identical. A fuller shape is a closer analog. Treat scores a point or two apart as ties.</span>`;
 function renderList() {
   $$('.tab').forEach((b) => b.classList.toggle('on', b.dataset.tab === state.tab));
   const ol = $('#list'); ol.innerHTML = '';
@@ -983,13 +983,14 @@ function drawOrbitLinks(t, la, lo) {
 }
 
 
-// ------------------------------------------------------------------ guided tour (for the 60 s demo video)
+// ------------------------------------------------------------------ guided tour (for the demo video, about 20 s)
 let tourToken = 0;
 const CAP_FADE = 260;
-// Each caption stays up long enough to read: about 200 words a minute plus a moment to look at the map.
+// Each caption stays up long enough to read: short lines (6 to 11 words) at about 260 words a minute plus a short
+// look, 2.4 to 3.3 s, so the whole six-step tour fits in about 20 s.
 const readMs = (html) => {
   const words = html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-  return Math.min(11000, Math.max(5500, 1800 + words * 300));
+  return Math.min(3300, Math.max(2400, 600 + words * 230));
 };
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 function captionEl() {
@@ -1061,10 +1062,10 @@ async function dragWeight(id, to, alive) {
   if (!row) return;
   row.classList.add('hot'); row.scrollIntoView({ block: 'center' });
   const inp = row.querySelector('input');
-  await sleep(1400);
+  await sleep(700);
   while (alive() && +inp.value < to) {
     inp.value = String(+inp.value + 0.5); inp.dispatchEvent(new Event('input'));
-    await sleep(700);
+    await sleep(500);
   }
 }
 const candName = () => { const c = state.cands[0]; return c ? esc(S.placeName(D, c.i).title) : 'a new site'; };
@@ -1076,17 +1077,12 @@ async function runTour() {
   const nCells = () => (state.scores ? state.scores.length : 0).toLocaleString('en');
   // captions that name a result read it from the live ranking, so they stay true when the data changes
   const steps = [
-    { stage: 'intro', c: () => 'Ground Truth finds the places on Earth that behave most like the Moon and Mars.' },
-    { stage: 'choose', c: () => 'Pick a destination: the Moon\'s south pole, where Artemis III will land, or a Mars landing site.' },
-    { t: 'shackleton-connecting-ridge', p: 'polar', c: () => 'Artemis III will land near the lunar south pole. <b>Where on Earth behaves like Shackleton\'s rim?</b>' },
-    { zoomOut: true, c: () => `We score all <b>${nCells()}</b> land cells on Earth on 17 traits: terrain, rock, sunlight, cold, ice, dryness, life.` },
-    { cand: 0, c: () => { const c = state.cands[0]; return `The best new match is <b>${candName()}</b>, ${esc(cellType(c.i).toLowerCase())}, ${Math.round(c.nearestKm).toLocaleString('en')} km from the nearest catalogued analog site.`; } },
-    { menu: 'landing', c: () => 'The ranking depends on the mission. <b>Six ranking methods</b> weight the 17 traits differently: all-round, rover &amp; landing tests, polar base, ice prospecting, instruments, or crew training.' },
-    { t: 'slater-plain', p: 'landing', cand: 0, c: () => `Rover &amp; landing tests put slope, roughness and relief first. For Slater Plain the answer moves to <b>${candName()}</b>.` },
-    { t: 'jezero-perseverance', p: 'overall', cand: 0, c: () => `On Mars, the all-round ranking finds Jezero crater's closest new Earth match in <b>${candName()}</b>, not one of the usual test sites.` },
-    { t: 'arcadia-planitia', p: 'isru', cand: 0, c: () => `Ice prospecting puts ground ice and cold first. For Arcadia Planitia, <b>${candName()}</b> comes out on top.` },
-    { weight: ['rough', 3], c: () => 'Or set <b>your own weights</b>: move any of the 17 trait sliders and every score on Earth updates at once.' },
-    { c: () => 'Every match says where the analogy holds, where it breaks, and how it helps exploration. <b>Ground Truth: open data, any browser.</b>', hold: 1500, reset: 'isru' },
+    { stage: 'intro', c: () => 'Terra Twin: Earth analogs for the Moon and Mars.' },
+    { stage: 'choose', c: () => 'First stop: the Moon\'s south pole.' },
+    { t: 'shackleton-connecting-ridge', p: 'polar', zoomOut: true, c: () => `All <b>${nCells()}</b> Earth land cells, scored against Shackleton's rim on 17 traits.` },
+    { cand: 0, c: () => { const c = state.cands[0]; return `Best new match: <b>${candName()}</b>, ${Math.round(c.nearestKm).toLocaleString('en')} km from any known analog.`; } },
+    { t: 'jezero-perseverance', p: 'overall', cand: 0, c: () => `Mars, Jezero crater. Best new match: <b>${candName()}</b>.` },
+    { weight: ['rough', 2], c: () => 'Six ranking methods, or <b>your own weights</b>. Scores update live.' },
   ];
   try {
     await nextFrame();                                   // let the globe settle above the caption band first
@@ -1095,7 +1091,7 @@ async function runTour() {
       if (!s.weight) closeMenu();
       if (s.stage === 'intro') replayTitle();
       if (s.stage === 'choose') await showChoose();
-      if (!s.stage && document.body.dataset.stage !== 'app') { leaveChoose(true); await sleep(REDUCED ? 0 : 700); if (!alive()) return; }
+      if (!s.stage && document.body.dataset.stage !== 'app') { leaveChoose(true); await sleep(REDUCED ? 0 : 300); if (!alive()) return; }
       // do the heavy work (re-scoring, building the panel) before anything moves, so no flight stutters
       if (s.t) { if (s.p) setPreset(s.p, false); selectNamed(s.t); }
       const c = s.cand != null ? state.cands[s.cand] : null;
@@ -1106,14 +1102,14 @@ async function runTour() {
       await caption(text, alive); if (!alive()) return;
       const t0 = performance.now(), dur = readMs(text) + (s.hold || 0);
       await nextFrame(); if (!alive()) return;
-      if (c) earth.flyTo({ lat: D.lat[c.i], lon: D.lon[c.i], zoom: Math.max(earth.getView().zoom, 3.2), duration: REDUCED ? 0 : 1600 });
-      else if (s.zoomOut) earth.flyTo({ lat: 10, lon: 40, zoom: 1, duration: REDUCED ? 0 : 1600 });
-      if (s.stage === 'choose') setTimeout(() => { if (alive()) pointAtMoon(); }, Math.max(0, dur - 1800));
-      if (s.menu) showPurposes(s.menu, Math.max(0, dur - 2200));
+      if (c) earth.flyTo({ lat: D.lat[c.i], lon: D.lon[c.i], zoom: Math.max(earth.getView().zoom, 3.2), duration: REDUCED ? 0 : 1300 });
+      else if (s.zoomOut) earth.flyTo({ lat: 10, lon: 40, zoom: 1, duration: REDUCED ? 0 : 1300 });
+      if (s.stage === 'choose') setTimeout(() => { if (alive()) pointAtMoon(); }, Math.max(900, dur - 1300));
+      if (s.menu) showPurposes(s.menu, Math.max(0, dur - 1800));
       if (s.weight) await dragWeight(s.weight[0], s.weight[1], alive);
       await sleep(Math.max(0, dur - (performance.now() - t0)));
     }
-  } finally { if (alive()) { stopTour(); closeDetail(); } }   // stop first, so closing the panel also pulls the globe back out
+  } finally { if (alive()) { if (state.preset === 'custom') setPreset('overall'); stopTour(); closeDetail(); } }   // undo the slider, then pull the globe back out   // stop first, so closing the panel also pulls the globe back out
 }
 
 // ------------------------------------------------------------------ method and sources
@@ -1126,8 +1122,8 @@ async function openAbout() {
   const abl = F && F.ablation ? F.ablation : [];
   const arow = (r) => `<tr${r.rejected ? ' class="muted"' : ''}><td>${esc(r.step)}</td><td>${r.mars_env.toFixed(2)} / ${r.mars_geo.toFixed(2)}</td><td>${r.moon_env.toFixed(2)} / ${r.moon_geo.toFixed(2)}</td></tr>`;
   $('#aboutBody').innerHTML = `
-  <h2>How Ground Truth works</h2>
-  <p>NASA's challenge asks for <i>new</i> Earth analogs for Moon base and Mars sites, found globally and systematically, with an honest account of where each analogy holds and where it breaks. Ground Truth scores every land cell on Earth against a Moon or Mars target, trait by trait, using the official NASA, ESA, JAXA and CSA resources wherever they could be used.</p>
+  <h2>How Terra Twin works</h2>
+  <p>NASA's challenge asks for <i>new</i> Earth analogs for Moon base and Mars sites, found globally and systematically, with an honest account of where each analogy holds and where it breaks. Terra Twin scores every land cell on Earth against a Moon or Mars target, trait by trait, using the official NASA, ESA, JAXA and CSA resources wherever they could be used.</p>
   <h3>Method</h3>
   <ol>
     <li><b>One grid for Earth.</b> Every land cell of 0.25° (about 28 km, ${D.cells.toLocaleString('en')} cells) gets ${D.man.traits.length} traits.</li>
@@ -1140,7 +1136,7 @@ async function openAbout() {
   </ol>
   <h3>The challenge's considerations, one by one</h3>
   <table>
-    <tr><th>Consideration</th><th>How Ground Truth answers it</th></tr>
+    <tr><th>Consideration</th><th>How Terra Twin answers it</th></tr>
     <tr><td>Geology and mineralogy</td><td>${has('rock') ? 'Rock type trait: Earth lithology (GLiM) vs the USGS Unified Geologic Map of the Moon and the published geology of each Mars site.' : 'USGS Unified Geologic Map of the Moon gives every Moon cell a rock family; Mars sites carry their published geology. (Earth rock map being added.)'} Surface albedo and barren ground add what cameras and spectrometers see.</td></tr>
     <tr><td>Terrain and topography</td><td>Slope, roughness and local relief on one ruler for all three bodies; live 28 km terrain close-ups side by side.</td></tr>
     <tr><td>Temperature and illumination</td><td>LRO Diviner temperatures for the Moon; JAXA GCOM-C day-night surface temperature swing for Earth; noon sun elevation from latitude and axial tilt; LROC WAC imagery shows the real polar shadows.</td></tr>
