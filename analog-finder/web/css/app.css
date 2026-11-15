@@ -352,6 +352,14 @@ table { border-collapse: collapse; width: 100%; font-size: 13px; }
 .caption { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: var(--bg); border-top: 1px solid var(--accent); padding: 16px max(24px, calc(50vw - 420px)) 18px; font: 400 21px/1.35 var(--serif); text-align: center; text-wrap: balance; }
 body.touring .results, body.touring .detail, body.touring .tgt { padding-bottom: 96px; }
 .caption b { font-weight: 400; color: var(--accent); }
+.caption { opacity: 0; transition: opacity .26s ease; }
+.caption.on { opacity: 1; }
+/* while the tour plays, the globe centres in the space above the caption band instead of sliding under it */
+body.touring .earth { bottom: var(--capH, 96px); }
+/* the tour points at the Moon on the destination screen the way a hover would */
+body[data-stage="choose"] .choose.settled .planet.tourhover .disc { transform: scale(1.07); }
+.wrow.hot { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .caption { transition: none; } }
 
 /* ------------------------------------------------------------------ small screens: one column, page scrolls inside the app */
 @media (max-width: 860px) {

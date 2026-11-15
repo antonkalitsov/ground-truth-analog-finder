@@ -146,6 +146,10 @@ async function goChoose() {
   requestAnimationFrame(() => requestAnimationFrame(() => setStage('choose')));
   setTimeout(() => { if (document.body.dataset.stage === 'choose') $('#app').hidden = true; }, 800);
   setTimeout(() => { if (document.body.dataset.stage === 'choose') $('#choose').classList.add('settled'); }, REDUCED ? 0 : 1700);   // hover growth only after the entrance
+  await ensurePlanets();
+}
+
+async function ensurePlanets() {
   if (!planets) {
     // lazy: the planet renderer is fetched only now, after the title card is already on screen
     const { createPlanet } = await import('./planets.js');
@@ -301,7 +305,8 @@ function selectNamed(id) {
 function setTarget(t) {
   if (t.body !== state.body) setBody(t.body);          // the body always follows the target, whatever path set it
   const tgtGlobe = tgt[t.body];
-  if (state.detail) closeDetail();
+  // the tour swaps the panel's content in place instead of closing it, so the layout does not jump between steps
+  if (state.detail) { if (state.touring) state.detail = null; else closeDetail(); }
   state.target = t; state.type = null; state.showAll = false;
   $('#qTarget').textContent = t.named ? shortName(t) : t.name;
   // one quiet line of context under the sentence: what the place is and where its numbers come from
@@ -980,33 +985,135 @@ function drawOrbitLinks(t, la, lo) {
 
 // ------------------------------------------------------------------ guided tour (for the 60 s demo video)
 let tourToken = 0;
-function caption(text) {
-  let c = $('.caption'); if (!c) { c = el('div', 'caption'); document.body.appendChild(c); }
-  c.innerHTML = text; c.hidden = !text;
+const CAP_FADE = 260;
+// Each caption stays up long enough to read: about 200 words a minute plus a moment to look at the map.
+const readMs = (html) => {
+  const words = html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  return Math.min(11000, Math.max(5500, 1800 + words * 300));
+};
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+function captionEl() {
+  let c = $('.caption'); if (!c) { c = el('div', 'caption'); c.hidden = true; document.body.appendChild(c); }
+  return c;
 }
-function stopTour() { if (!state.touring) return; state.touring = false; document.body.classList.remove('touring'); tourToken++; caption(''); $('#btnTour').textContent = 'Play tour'; }
+// cross-fade to new text; the band itself never changes height abruptly enough to shove the globe
+async function caption(text, alive = () => true) {
+  const c = captionEl();
+  if (!text) { c.hidden = true; c.innerHTML = ''; c.classList.remove('on'); return; }
+  if (!c.hidden && c.innerHTML) { c.classList.remove('on'); await sleep(REDUCED ? 0 : CAP_FADE); if (!alive()) return; }
+  c.innerHTML = text; c.hidden = false;
+  document.body.style.setProperty('--capH', c.offsetHeight + 'px');
+  await nextFrame(); c.classList.add('on');
+}
+function stopTour() {
+  if (!state.touring) return;
+  state.touring = false; document.body.classList.remove('touring'); tourToken++; caption(''); closeMenu();
+  $('#btnTour').textContent = 'Play tour';
+  if (document.body.dataset.stage !== 'app') leaveChoose(false);       // stopped during the opening: back to the instrument
+  if (earth) requestAnimationFrame(() => earth.resize());
+}
+// The tour's opening: replay the title card, show the destination choice, then 'pick' the Moon.
+function replayTitle() {
+  const b = document.body;
+  b.classList.add('instant'); b.classList.remove('play'); setStage('intro');
+  void b.offsetWidth;                                                   // restart the CSS reveal from its first frame
+  b.classList.add('play');
+  requestAnimationFrame(() => requestAnimationFrame(() => b.classList.remove('instant')));
+}
+async function showChoose() {
+  const c = $('#choose');
+  c.hidden = false; c.inert = true; c.classList.remove('settled'); $$('.planet').forEach((x) => x.classList.remove('chosen', 'tourhover'));
+  await ensurePlanets();
+  for (const k of ['moon', 'mars']) planets[k] && planets[k].start();
+  await nextFrame(); setStage('choose');
+  setTimeout(() => { if (state.touring && document.body.dataset.stage === 'choose') c.classList.add('settled'); }, REDUCED ? 0 : 1700);
+}
+function pointAtMoon() {
+  $('.planet[data-body="moon"]').classList.add('tourhover');
+  if (planets && planets.moon) planets.moon.hover(true);
+}
+function leaveChoose(pick) {
+  const btn = $('.planet[data-body="moon"]');
+  btn.classList.remove('tourhover'); if (planets && planets.moon) planets.moon.hover(false);
+  $('#choose').classList.remove('settled');
+  if (pick) btn.classList.add('chosen');
+  setStage('app');
+  setTimeout(() => {
+    if (document.body.dataset.stage !== 'app') return;
+    $('#choose').hidden = true; btn.classList.remove('chosen');
+    for (const k of ['moon', 'mars']) if (planets && planets[k]) planets[k].stop();
+  }, 1000);
+}
+// the mission menu, opened by the tour as if someone had clicked it; the highlight moves to the next method
+function showPurposes(nextId, delay) {
+  openMenu($('#qPurpose'), purposeMenu);
+  setTimeout(() => {
+    if (!state.touring || $('#menu').hidden) return;
+    const k = D.man.presets.findIndex((p) => p.id === nextId);
+    $$('#menu > button').forEach((b, j) => b.classList.toggle('on', j === k));
+  }, delay);
+}
+// open the trait sliders and move one up half a step at a time, like a hand on the slider
+async function dragWeight(id, to, alive) {
+  openMenu($('#qPurpose'), purposeMenu);
+  [...$$('#menu > button')].pop().click();                              // "Adjust trait weights…"
+  const k = D.man.traits.findIndex((t) => t.id === id), row = $$('#menu .wrow')[k];
+  if (!row) return;
+  row.classList.add('hot'); row.scrollIntoView({ block: 'center' });
+  const inp = row.querySelector('input');
+  await sleep(1400);
+  while (alive() && +inp.value < to) {
+    inp.value = String(+inp.value + 0.5); inp.dispatchEvent(new Event('input'));
+    await sleep(700);
+  }
+}
+const candName = () => { const c = state.cands[0]; return c ? esc(S.placeName(D, c.i).title) : 'a new site'; };
 async function runTour() {
-  state.touring = true; document.body.classList.add('touring'); const tok = ++tourToken; $('#btnTour').textContent = 'Stop tour';
+  state.touring = true; const tok = ++tourToken; $('#btnTour').textContent = 'Stop tour';
   const alive = () => tok === tourToken;
+  closeDetail();
+  document.body.classList.add('touring');
+  const nCells = () => (state.scores ? state.scores.length : 0).toLocaleString('en');
+  // captions that name a result read it from the live ranking, so they stay true when the data changes
   const steps = [
-    { t: 'shackleton-connecting-ridge', p: 'polar', c: 'Artemis III will land near the lunar south pole. <b>Where on Earth behaves like Shackleton\'s rim?</b>' },
-    { c: 'We score all <b>318,332</b> land cells on Earth on 17 traits: terrain, rock, sunlight, cold, ice, dryness, life.', wait: 4200, zoomOut: true },
-    { cand: 0, c: 'Low sun, deep cold and bare rocky relief point to <b>Peary Land, North Greenland</b>: 850 km from the nearest catalogued analog.' },
-    { t: 'slater-plain', p: 'landing', cand: 0, c: 'Change the mission to <b>rover &amp; landing tests</b> for Slater Plain, and the answer moves to the dry Andes.' },
-    { t: 'jezero-perseverance', p: 'overall', cand: 0, c: 'On Mars, Jezero crater\'s closest Earth match is in the eastern Sahara, not one of the usual test sites.' },
-    { t: 'arcadia-planitia', p: 'isru', cand: 0, c: 'For ice prospecting at Arcadia Planitia, the Tibetan Plateau\'s frozen dry ground wins.' },
-    { c: 'Every match says where the analogy holds, where it breaks, and how it helps exploration. <b>Ground Truth: open data, any browser.</b>', wait: 5000 },
+    { stage: 'intro', c: () => 'Ground Truth finds the places on Earth that behave most like the Moon and Mars.' },
+    { stage: 'choose', c: () => 'Pick a destination: the Moon\'s south pole, where Artemis III will land, or a Mars landing site.' },
+    { t: 'shackleton-connecting-ridge', p: 'polar', c: () => 'Artemis III will land near the lunar south pole. <b>Where on Earth behaves like Shackleton\'s rim?</b>' },
+    { zoomOut: true, c: () => `We score all <b>${nCells()}</b> land cells on Earth on 17 traits: terrain, rock, sunlight, cold, ice, dryness, life.` },
+    { cand: 0, c: () => { const c = state.cands[0]; return `The best new match is <b>${candName()}</b>, ${esc(cellType(c.i).toLowerCase())}, ${Math.round(c.nearestKm).toLocaleString('en')} km from the nearest catalogued analog site.`; } },
+    { menu: 'landing', c: () => 'The ranking depends on the mission. <b>Six ranking methods</b> weight the 17 traits differently: all-round, rover &amp; landing tests, polar base, ice prospecting, instruments, or crew training.' },
+    { t: 'slater-plain', p: 'landing', cand: 0, c: () => `Rover &amp; landing tests put slope, roughness and relief first. For Slater Plain the answer moves to <b>${candName()}</b>.` },
+    { t: 'jezero-perseverance', p: 'overall', cand: 0, c: () => `On Mars, the all-round ranking finds Jezero crater's closest new Earth match in <b>${candName()}</b>, not one of the usual test sites.` },
+    { t: 'arcadia-planitia', p: 'isru', cand: 0, c: () => `Ice prospecting puts ground ice and cold first. For Arcadia Planitia, <b>${candName()}</b> comes out on top.` },
+    { weight: ['rough', 3], c: () => 'Or set <b>your own weights</b>: move any of the 17 trait sliders and every score on Earth updates at once.' },
+    { c: () => 'Every match says where the analogy holds, where it breaks, and how it helps exploration. <b>Ground Truth: open data, any browser.</b>', hold: 1500, reset: 'isru' },
   ];
   try {
+    await nextFrame();                                   // let the globe settle above the caption band first
     for (const s of steps) {
       if (!alive()) return;
+      if (!s.weight) closeMenu();
+      if (s.stage === 'intro') replayTitle();
+      if (s.stage === 'choose') await showChoose();
+      if (!s.stage && document.body.dataset.stage !== 'app') { leaveChoose(true); await sleep(REDUCED ? 0 : 700); if (!alive()) return; }
+      // do the heavy work (re-scoring, building the panel) before anything moves, so no flight stutters
       if (s.t) { if (s.p) setPreset(s.p, false); selectNamed(s.t); }
-      caption(s.c);
-      if (s.zoomOut) { closeDetail(); await earth.flyTo({ lat: 10, lon: 40, zoom: 1, duration: 1400 }); }
-      if (s.cand != null && state.cands[s.cand]) { await sleep(900); if (!alive()) return; openDetail({ i: state.cands[s.cand].i, rank: s.cand + 1 }); }
-      await sleep(s.wait || 6500);
+      const c = s.cand != null ? state.cands[s.cand] : null;
+      if (c) openDetail({ i: c.i, rank: s.cand + 1, fly: false });
+      if (s.zoomOut) closeDetail();
+      if (s.reset) setPreset(s.reset);                     // put the hand-moved slider back
+      const text = s.c();
+      await caption(text, alive); if (!alive()) return;
+      const t0 = performance.now(), dur = readMs(text) + (s.hold || 0);
+      await nextFrame(); if (!alive()) return;
+      if (c) earth.flyTo({ lat: D.lat[c.i], lon: D.lon[c.i], zoom: Math.max(earth.getView().zoom, 3.2), duration: REDUCED ? 0 : 1600 });
+      else if (s.zoomOut) earth.flyTo({ lat: 10, lon: 40, zoom: 1, duration: REDUCED ? 0 : 1600 });
+      if (s.stage === 'choose') setTimeout(() => { if (alive()) pointAtMoon(); }, Math.max(0, dur - 1800));
+      if (s.menu) showPurposes(s.menu, Math.max(0, dur - 2200));
+      if (s.weight) await dragWeight(s.weight[0], s.weight[1], alive);
+      await sleep(Math.max(0, dur - (performance.now() - t0)));
     }
-  } finally { if (alive()) { closeDetail(); stopTour(); } }
+  } finally { if (alive()) { stopTour(); closeDetail(); } }   // stop first, so closing the panel also pulls the globe back out
 }
 
 // ------------------------------------------------------------------ method and sources
