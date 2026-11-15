@@ -91,15 +91,19 @@ bare = (frac[ci[60]] + 0.7 * frac[ci[100]] + 0.4 * (frac[ci[20]] + frac[ci[30]])
 snow = frac[ci[70]] / nonwater
 veg = (frac[ci[10]] + frac[ci[20]] + frac[ci[30]] + frac[ci[40]] + frac[ci[90]] + frac[ci[95]] + frac[ci[100]]) / nonwater
 nowc = total < 50
-# no WorldCover (Antarctica): Natural Earth glaciated areas give ice vs. exposed rock
+# no WorldCover in Antarctica: Natural Earth glaciated areas give ice vs. exposed rock
 bare = np.where(nowc, 1 - glacfrac, bare); snow = np.where(nowc, glacfrac, snow); veg = np.where(nowc, 0, veg)
+# WorldCover also stops at about 82.75 N (north Greenland, north Ellesmere). The 1:10m glacier outlines are too coarse
+# there (local ice caps come out as 0 % ice, ground as 100 % barren), so those cells are left out instead of guessed.
+arctic_gap = nowc & (lat_c[:, None] > 0)
 
 # ---------------------------------------------------------------- illumination and ground ice
 sun = np.repeat(mean_noon_sun_elevation(lat_c, 23.44)[:, None], NX, 1).astype(np.float32)
 # ground-ice (permafrost) likelihood from mean annual air temperature: continuous below -6 C, none above +1 C
 ice = np.clip((1.0 - temp) / 7.0, 0, 1).astype(np.float32)
 
-ok = (landfrac >= 0.3) & ~np.isnan(t["slope"])
+ok = (landfrac >= 0.3) & ~np.isnan(t["slope"]) & ~arctic_gap
+print("left out, no land cover north of WorldCover:", int(((landfrac >= 0.3) & arctic_gap).sum()), flush=True)
 print("land cells:", int(ok.sum()), flush=True)
 np.savez_compressed(out, ok=ok, landfrac=landfrac, lat=lat_c, lon=lon_c,
                     slope=t["slope"], rough=t["rough"], relief=t["relief"], elev=elev,

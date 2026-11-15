@@ -111,6 +111,22 @@ def dequant_t(tid, q):
 def earth_pressure(elev):
     return 101.325 * (1 - 2.25577e-5 * np.clip(elev, -500, 9000)) ** 5.25588
 
+# Measured surface weather at landing sites, replacing the latitude model where a lander measured it.
+# Jezero: Perseverance MEDA, first Martian year (Mars Year 36).
+# Albedo stays from the TES map (0.17 over the 28 km window, the scale Earth is compared at); MEDA's traverse mean
+# of 0.14 (Martinez et al. 2023) covers only a few km of crater floor and delta.
+MARS_SITE_MEASURED = {
+    "jezero-perseverance": dict(
+        values=dict(temp=-55.0,      # air, seasonal mean about -55 C (Rodriguez-Manfredi et al. 2023, Nature Geoscience)
+                    trange=70.0,     # ground day-night swing 56-87 K, about 70 K typical (Martinez et al. 2023, JGR Planets)
+                    pressure=0.72,   # kPa, daily mean 650-761 Pa over the first 250 sols (Rodriguez-Manfredi et al. 2023)
+                    dust=0.45,       # visible dust optical depth 0.3-0.6 outside dust storms (Rodriguez-Manfredi et al. 2023)
+                    wind=4.0),       # m/s, near zero before dawn, 5-7 in the afternoon (Rodriguez-Manfredi et al. 2023)
+        label="Perseverance MEDA weather station, first Martian year",
+        refs=["https://doi.org/10.1038/s41561-022-01084-0", "https://doi.org/10.1029/2022JE007537",
+              "https://doi.org/10.1029/2024JE008385"]),
+}
+
 def earth_ice(temp):
     return np.clip((1.0 - temp) / 7.0, 0, 1)
 
